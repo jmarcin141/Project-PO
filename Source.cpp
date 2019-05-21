@@ -1,83 +1,192 @@
+#define _CRT_SECURE_NO_DEPRECATE // odczyt fstream , 
 #include <iostream>
-#include "bass.h"
+#include <string>
+#include <fstream>
 
-////
-////#include "aquila-src/aquila/global.h"
-////#include "aquila-src/aquila/source/generator/SineGenerator.h"
-////#include "aquila-src/aquila/transform/FftFactory.h"
-////#include "aquila-src/aquila/tools/TextPlot.h"
-////#include <algorithm>
-////#include <functional>
-////#include <memory>
+#include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
+
+
+using namespace std;
+using std::string;
+using std::fstream;
+
+typedef struct  WAV_HEADER {
+	char                RIFF[4];        // RIFF Header      Magic header
+	unsigned long       ChunkSize;      // RIFF Chunk Size  
+	char                WAVE[4];        // WAVE Header      
+	char                fmt[4];         // FMT header       
+	unsigned long       Subchunk1Size;  // Size of the fmt chunk                                
+	unsigned short      AudioFormat;    // Audio format 1=PCM,6=mulaw,7=alaw, 257=IBM Mu-Law, 258=IBM A-Law, 259=ADPCM 
+	unsigned short      NumOfChan;      // Number of channels 1=Mono 2=Sterio                   
+	unsigned long       SamplesPerSec;  // Sampling Frequency in Hz                             
+	unsigned long       bytesPerSec;    // bytes per second 
+	unsigned short      blockAlign;     // 2=16-bit mono, 4=16-bit stereo 
+	unsigned short      bitsPerSample;  // Number of bits per sample      
+	char                Subchunk2ID[4]; // "data"  string   
+	unsigned long       Subchunk2Size;  // Sampled data length    
+
+}wav_hdr;
+
+// Function prototypes 
+int getFileSize(FILE *inFile);
+
+
+//ReadRIFF();
+//ReadFMT();
+//int32 chunk2Id = Read32(BigEndian);
+//int32 chunk2Size = Read32(LittleEndian);
+
 
 
 int main()
 {
 	system("Color 0B");
 	std::cout << "Efekt gitarowy - projekt" << std::endl;
-
 	std::cout << "Test Git\n";
 
+	sf::SoundBuffer buf;
+	if (!buf.loadFromFile("E:\\AGH\\Semestr 4\\PO\\Projekty\\Projekt-Efekt-Gitarowy\\imperial_march.wav"))
+	{
+		std::cout << "not loaded" << std::endl;
+		//return -1;
+	}
+	else { std::cout << "loaded" << std::endl; }
 
-	BASS_MusicLoad(1, "file.mp3", 0, 0, 0, 44000);
+	sf::Sound sound;
+	sound.setBuffer(buf);
 
-	////// input signal parameters
-	////const std::size_t SIZE = 64;
-	////const Aquila::FrequencyType sampleFreq = 2000;
-	////const Aquila::FrequencyType f1 = 96, f2 = 813;
-	////const Aquila::FrequencyType f_lp = 500;
+	char key = {};
+	int w = 0;
+	while (1)
+	{
+		std::cout << "P-pause\t S-start\t R-stop\t W-przewin\n";
+		std::cin >> key;
+		switch (key)
+		{
+		case 'p':
+			std::cout << "Pause\n";
+			sound.pause();
+			break;
 
-	////Aquila::SineGenerator sineGenerator1(sampleFreq);
-	////sineGenerator1.setAmplitude(32).setFrequency(f1).generate(SIZE);
-	////Aquila::SineGenerator sineGenerator2(sampleFreq);
-	////sineGenerator2.setAmplitude(8).setFrequency(f2).setPhase(0.75).generate(SIZE);
-	////auto sum = sineGenerator1 + sineGenerator2;
+		case 's':
+			std::cout << "Start\n";
+			sound.play();
+			break;
 
-	////Aquila::TextPlot plt("Signal waveform before filtration");
-	////plt.plot(sum);
+		case 'r':
+			std::cout << "Cofnij\n";
+			sound.stop();
+			break;
 
-	////// calculate the FFT
-	////auto fft = Aquila::FftFactory::getFft(SIZE);
-	////Aquila::SpectrumType spectrum = fft->fft(sum.toArray());
-	////plt.setTitle("Signal spectrum before filtration");
-	////plt.plotSpectrum(spectrum);
+		case 'w':
+			std::cout << "Przewin o...";
+			std::cin >> w;
+			sound.setPlayingOffset(sf::seconds(w));
+			break;
 
-	////// generate a low-pass filter spectrum
-	////Aquila::SpectrumType filterSpectrum(SIZE);
-	////for (std::size_t i = 0; i < SIZE; ++i)
-	////{
-	////	if (i < (SIZE * f_lp / sampleFreq))
-	////	{
-	////		// passband
-	////		filterSpectrum[i] = 1.0;
-	////	}
-	////	else
-	////	{
-	////		// stopband
-	////		filterSpectrum[i] = 0.0;
-	////	}
-	////}
-	////plt.setTitle("Filter spectrum");
-	////plt.plotSpectrum(filterSpectrum);
+		default:
+			break;
+		}
+	}
+		wav_hdr wavHeader;
+		FILE *wavFile;
+		int headerSize = sizeof(wav_hdr), filelength = 0;
 
-	////// the following call does the multiplication of two spectra
-	////// (which is complementary to convolution in time domain)
-	////std::transform(
-	////	std::begin(spectrum),
-	////	std::end(spectrum),
-	////	std::begin(filterSpectrum),
-	////	std::begin(spectrum),
-	////	[](Aquila::ComplexType x, Aquila::ComplexType y) { return x * y; }
-	////);
-	////plt.setTitle("Signal spectrum after filtration");
-	////plt.plotSpectrum(spectrum);
+		string answer;
 
-	////// Inverse FFT moves us back to time domain
-	////double x1[SIZE];
-	////fft->ifft(spectrum, x1);
-	////plt.setTitle("Signal waveform after filtration");
-	////plt.plot(x1, SIZE);
+		do {
+			string input;
+			string answer;
+
+			const char* filePath;
+
+			cout << "Pick wav file from the Windows Media File: ";
+			//cin >> input;
+			//cin.get();
+
+			cout << endl;
+
+			std::string path = "E:\\AGH\\Semestr 4\\PO\\Projekty\\Projekt-Efekt-Gitarowy\\imperial_march.wav";
+			filePath = path.c_str();
+
+			wavFile = fopen("E:\\AGH\\Semestr 4\\PO\\Projekty\\Projekt-Efekt-Gitarowy\\imperial_march.wav","r");
+
+			if (wavFile == NULL) {
+				printf("Can not able to open wave file\n");
+				//exit(EXIT_FAILURE);
+			}
+
+			fread(&wavHeader, headerSize, 1, wavFile);
+			filelength = getFileSize(wavFile);
+			fclose(wavFile);
+
+			cout << "File is                    :" << filelength << " bytes." << endl;
+
+			cout << "RIFF header                :" << wavHeader.RIFF[0]
+				<< wavHeader.RIFF[1]
+				<< wavHeader.RIFF[2]
+				<< wavHeader.RIFF[3] << endl;
+
+			cout << "WAVE header                :" << wavHeader.WAVE[0]
+				<< wavHeader.WAVE[1]
+				<< wavHeader.WAVE[2]
+				<< wavHeader.WAVE[3]
+				<< endl;
+
+			cout << "FMT                        :" << wavHeader.fmt[0]
+				<< wavHeader.fmt[1]
+				<< wavHeader.fmt[2]
+				<< wavHeader.fmt[3]
+				<< endl;
+
+			cout << "Data size                  :" << wavHeader.ChunkSize << endl;
+
+			// Display the sampling Rate form the header
+			cout << "Sampling Rate              :" << wavHeader.SamplesPerSec << endl;
+			cout << "Number of bits used        :" << wavHeader.bitsPerSample << endl;
+			cout << "Number of channels         :" << wavHeader.NumOfChan << endl;
+			cout << "Number of bytes per second :" << wavHeader.bytesPerSec << endl;
+			cout << "Data length                :" << wavHeader.Subchunk2Size << endl;
+			cout << "Audio Format               :" << wavHeader.AudioFormat << endl;
+			// Audio format 1=PCM,6=mulaw,7=alaw, 257=IBM Mu-Law, 258=IBM A-Law, 259=ADPCM 
+
+
+			cout << "Block align                :" << wavHeader.blockAlign << endl;
+
+			cout << "Data string                :" << wavHeader.Subchunk2ID[0]
+				<< wavHeader.Subchunk2ID[1]
+				<< wavHeader.Subchunk2ID[2]
+				<< wavHeader.Subchunk2ID[3]
+				<< endl;
+
+			cout << endl << endl << "Try something else? (y/n)";
+			cin >> answer;
+			cin.get();
+			cout << endl << endl;
+
+		
+
+
+		} while (answer == "y");
+
+
+		getchar();
+
 
 	system("Pause");
 	return 0;
 }
+
+// find the file size 
+int getFileSize(FILE *inFile) {
+	int fileSize = 0;
+	fseek(inFile, 0, SEEK_END);
+
+	fileSize = ftell(inFile);
+
+	fseek(inFile, 0, SEEK_SET);
+	return fileSize;
+}
+
