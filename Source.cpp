@@ -1,12 +1,33 @@
+//#include<FL/Fl.h>
+//#include<FL/Fl_Box.h>
+//#include<FL/Fl_Window.h>
+
+//int main()
+//{
+//	Fl_Window window(200, 200, "Window title");
+//	Fl_Box box(0, 0, 200, 200, "Hey, I mean, Hello, World!");
+//	window.show();
+//	return Fl::run();
+//}
+
+
+
+
+
+
 #define _CRT_SECURE_NO_DEPRECATE // odczyt fstream , 
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <memory>
 
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
+#include <FL/Fl.H>
+#include <FL/Fl_Window.H>
+#include <FL/Fl_Button.H>
 
 using namespace std;
 using std::string;
@@ -40,56 +61,340 @@ int getFileSize(FILE *inFile);
 
 
 
+
+
+
+class MyButton : public Fl_Button
+{
+	static int count;
+public:
+	MyButton(int x, int y, int w, int h, const char*l = 0)
+		:Fl_Button(x, y, w, h, l) {}
+
+	int handle(int e)
+	{
+		int ret = Fl_Button::handle(e);
+		cout << endl << count++ << " ******** button " << label() << " receives ";
+
+
+		switch (e)
+		{
+		case FL_PUSH:
+			cout << "push" << " event and returns:" << ret << endl;
+			break;
+
+		case FL_RELEASE:
+			cout << "release" << " event and returns:" << ret << endl;
+			break;
+
+		case FL_ENTER:
+			color(FL_CYAN);
+			cout << "enter" << " event and returns:" << ret << endl;
+			redraw();
+			break;
+
+		case FL_LEAVE:
+			color(FL_BACKGROUND_COLOR);
+			cout << "leave" << " event and returns:" << ret << endl;
+			redraw();
+			break;
+
+		case FL_DRAG:
+			cout << "drag" << " event and returns:" << ret << endl;
+			break;
+
+		case FL_FOCUS:
+			cout << "focus" << " event and returns:" << ret << endl;
+			break;
+
+		case FL_UNFOCUS:
+			cout << "unfocus" << " event and returns:" << ret << endl;
+			break;
+
+		case FL_KEYDOWN:
+			cout << "keydown" << " event and returns:" << ret << endl;
+			break;
+
+		case FL_KEYUP:
+			if (Fl::event_key() == shortcut()) {
+				box(FL_UP_BOX);
+				redraw();
+				ret = 1; //return handled so keyup event stops
+			}         //being sent to ALL other buttons unecessarily
+
+			cout << "keyup" << " event and returns:" << ret << endl;
+			break;
+
+		case FL_CLOSE:
+			cout << "close" << " event and returns:" << ret << endl;
+			break;
+
+		case FL_MOVE:
+			cout << "move" << " event and returns:" << ret << endl;
+			break;
+
+		case FL_SHORTCUT:
+			if (Fl::event_key() == shortcut()) {
+				box(FL_DOWN_BOX);
+				redraw();
+			}
+			cout << "shortcut" << " event and returns:" << ret << endl;
+			break;
+
+		case FL_DEACTIVATE:
+			cout << "deactivate" << " event and returns:" << ret << endl;
+			break;
+
+		case FL_ACTIVATE:
+			cout << "activate" << " event and returns:" << ret << endl;
+			break;
+
+		case FL_HIDE:
+			cout << "hide" << " event and returns:" << ret << endl;
+			break;
+
+		case FL_SHOW:
+			cout << "show" << " event and returns:" << ret << endl;
+			break;
+
+		case FL_PASTE:
+			cout << "paste" << " event and returns:" << ret << endl;
+			break;
+
+		case  FL_SELECTIONCLEAR:
+			cout << "selectionclear" << " event and returns:" << ret << endl;
+			break;
+
+		case  FL_MOUSEWHEEL:
+			cout << "mousewheel" << " event and returns:" << ret << endl;
+			break;
+
+		case  FL_NO_EVENT:
+			cout << "no event" << " and returns:" << ret << endl;
+			break;
+
+
+
+		}
+		return(ret);
+	}
+
+};
+
+
+
+
+class Music
+{
+private:
+	sf::SoundBuffer buf;
+	sf::Sound sound;
+
+public:
+	Music() {}
+
+	//~Music() {}
+
+	void loadSound()
+	{
+		if (!buf.loadFromFile("E:\\AGH\\Semestr 4\\PO\\Projekty\\Projekt-Efekt-Gitarowy\\imperial_march.wav"))
+		{
+			std::cout << "not loaded" << std::endl;
+			//return -1;
+		}
+		else { std::cout << "loaded" << std::endl; }
+		sound.setBuffer(buf);
+	}
+
+	void playSoud()
+	{
+		sound.play();
+	}
+
+	void stopSound()
+	{
+		sound.stop();
+	}
+
+	void pauseSound()
+	{
+		sound.pause();
+	}
+
+	void loopSound()
+	{
+		if (sound.getLoop() == true) {
+			sound.setLoop(false);
+		}
+		else { sound.setLoop(true); }
+	}
+
+	void rewindSound()
+	{
+		if (sound.getPlayingOffset() > sf::seconds(5) ) {
+			sound.setPlayingOffset(sound.getPlayingOffset() - sf::seconds(5));
+		}
+		else { sound.setPlayingOffset(sf::seconds(0)); }
+	}
+
+	void forwardSound()
+	{
+		sound.setPlayingOffset(sf::seconds(5) + sound.getPlayingOffset());
+	}
+
+	void volumePlus()
+	{
+		//Volume is...(between 0 - 100);
+		if (sound.getVolume() <= 100) {
+			sound.setVolume(sound.getVolume() + 5);
+		}
+	}
+	
+	void volumeMinus()
+	{
+		//Volume is...(between 0 - 100);
+		if (sound.getVolume() >= 5) {
+			sound.setVolume(sound.getVolume() - 5);
+		}
+	}
+
+	void speed()
+	{
+		if (sound.getPitch() < 10) {
+			sound.setPitch(sound.getPitch() + 1);
+		} 
+		else { sound.setPitch(1); }
+	}
+};
+
+
+int MyButton::count = 0;
+
+Music music;
+
+void but_loadSound_cb(Fl_Widget* w, void*v) 
+{
+	music.loadSound();
+	std::cout << std::endl << "Button loadSound callback!" << std::endl;
+}
+
+void but_play_cb(Fl_Widget* w, void* v)
+{
+	music.playSoud();
+	cout << endl << "Button play callback!" << endl;
+}
+
+void but_pause_cb(Fl_Widget* w, void* v)
+{
+	music.pauseSound();
+	cout << endl << "Button pause callback!" << endl;
+}
+
+void but_loop_cb(Fl_Widget* w, void* v)
+{
+	music.loopSound();
+	cout << endl << "Button loop callback!" << endl;
+}
+
+void but_stop_cb(Fl_Widget* w, void* v)
+{
+	music.stopSound();
+	cout << endl << "Button stop callback!" << endl;
+}
+
+void but_rewind_cb(Fl_Widget* w, void* v)
+{
+	music.rewindSound();
+	cout << endl << "Button rewind callback!" << endl;
+}
+
+void but_forward_cb(Fl_Widget* w, void* v)
+{
+	music.forwardSound();
+	cout << endl << "Button forward callback!" << endl;
+}
+
+void but_volumePlus_cb(Fl_Widget *w, void* v)
+{
+	music.volumePlus();
+}
+
+void but_volumeMinus_cb(Fl_Widget *w, void* v)
+{
+	music.volumeMinus();
+}
+
+void but_speed_cb(Fl_Widget* w, void* v)
+{
+	music.speed();
+}
+
+
+
 int main()
 {
 	system("Color 0B");
 	std::cout << "Efekt gitarowy - projekt" << std::endl;
 	std::cout << "Test Git\n";
 
-	sf::SoundBuffer buf;
-	if (!buf.loadFromFile("E:\\AGH\\Semestr 4\\PO\\Projekty\\Projekt-Efekt-Gitarowy\\imperial_march.wav"))
-	{
-		std::cout << "not loaded" << std::endl;
-		//return -1;
-	}
-	else { std::cout << "loaded" << std::endl; }
+	
+	Fl_Window win(400, 200);
+	win.begin();
 
-	sf::Sound sound;
-	sound.setBuffer(buf);
+	MyButton but_loadSound(10, 10, 105, 25, "Load Sound");
+	but_loadSound.shortcut('l');
+	but_loadSound.callback(but_loadSound_cb);
 
-	char key = {};
-	int w = 0;
-	while (1)
-	{
-		std::cout << "P-pause\t S-start\t R-stop\t W-przewin\n";
-		std::cin >> key;
-		switch (key)
-		{
-		case 'p':
-			std::cout << "Pause\n";
-			sound.pause();
-			break;
+	MyButton but_play(50, 50, 25, 25, ">");
+	but_play.shortcut('s');
+	but_play.callback(but_play_cb);
 
-		case 's':
-			std::cout << "Start\n";
-			sound.play();
-			break;
+	MyButton but_pause(10, 50, 25, 25, "||");
+	but_pause.shortcut('p');
+	but_pause.callback(but_pause_cb);
 
-		case 'r':
-			std::cout << "Cofnij\n";
-			sound.stop();
-			break;
+	MyButton but_loop(90, 50, 25, 25, "@");
+	but_loop.shortcut('i');
+	but_loop.callback(but_loop_cb);
 
-		case 'w':
-			std::cout << "Przewin o...";
-			std::cin >> w;
-			sound.setPlayingOffset(sf::seconds(w));
-			break;
+	MyButton but_stop(50, 90, 25, 25, "o");
+	but_stop.shortcut('o');
+	but_stop.callback(but_stop_cb);
+	
+	MyButton but_rewind(10, 90, 25, 25, "<<");
+	but_rewind.shortcut('a');
+	but_rewind.callback(but_rewind_cb);
 
-		default:
-			break;
-		}
-	}
+	MyButton but_forward(90, 90, 25, 25, ">>");
+	but_forward.shortcut('d');
+	but_forward.callback(but_forward_cb);
+
+	MyButton but_volumePlus(170, 10, 25, 25, "+");
+	but_volumePlus.shortcut('+');
+	but_volumePlus.callback(but_volumePlus_cb);
+
+	MyButton but_volumeMinus(130, 10, 25, 25, "-");
+	but_volumeMinus.shortcut('-');
+	but_volumeMinus.callback(but_volumeMinus_cb);
+	
+	MyButton but_speed(210, 10, 30, 25, ">>x");
+	but_speed.shortcut('x');
+	but_speed.callback(but_speed_cb);
+
+
+
+	win.end();
+	win.show();
+
+
+
+
+
+	
+/*
+
+
+
 		wav_hdr wavHeader;
 		FILE *wavFile;
 		int headerSize = sizeof(wav_hdr), filelength = 0;
@@ -175,8 +480,9 @@ int main()
 		getchar();
 
 
-	system("Pause");
-	return 0;
+	system("Pause"); */
+	return(Fl::run());
+	//return 0;
 }
 
 // find the file size 
