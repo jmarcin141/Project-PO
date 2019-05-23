@@ -15,7 +15,7 @@
 
 
 
-#define _CRT_SECURE_NO_DEPRECATE // odczyt fstream , 
+//#define _CRT_SECURE_NO_DEPRECATE // odczyt fstream , 
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -206,6 +206,17 @@ public:
 		sound.setBuffer(buf);
 	}
 
+	bool getActiveSound()
+	{
+		if (sf::Sound::Status::Playing )
+		{
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 	void playSoud()
 	{
 		sound.play();
@@ -258,12 +269,25 @@ public:
 		}
 	}
 
-	void speed()
+	void speedPlus()
 	{
-		if (sound.getPitch() < 10) {
-			sound.setPitch(sound.getPitch() + 1);
+		if (sound.getPitch() <= 2.f) {
+			sound.setPitch(sound.getPitch() + 0.2f);
 		} 
-		else { sound.setPitch(1); }
+		else if (sound.getPitch() > 2.f && sound.getPitch() < 7.f) {
+			sound.setPitch(sound.getPitch() + 1.f);
+		}
+		else { sound.setPitch(1.f); }
+	}
+
+	void speedMinus()
+	{
+		if (sound.getPitch() <= 2.f && sound.getPitch() > 0.3f ) {
+			sound.setPitch(sound.getPitch() - 0.2f);
+		}
+		else if (sound.getPitch() > 2.f && sound.getPitch() < 7.f) {
+			sound.setPitch(sound.getPitch() - 1.f);
+		}
 	}
 };
 
@@ -317,16 +341,25 @@ void but_forward_cb(Fl_Widget* w, void* v)
 void but_volumePlus_cb(Fl_Widget *w, void* v)
 {
 	music.volumePlus();
+	std::cout << std::endl << "Button volume plus callback!" << std::endl;
 }
 
 void but_volumeMinus_cb(Fl_Widget *w, void* v)
 {
 	music.volumeMinus();
+	std::cout << std::endl << "Button volume minus callback!" << std::endl;
 }
 
-void but_speed_cb(Fl_Widget* w, void* v)
+void but_speedPlus_cb(Fl_Widget* w, void* v)
 {
-	music.speed();
+	music.speedPlus();
+	std::cout << std::endl << "Button speed plus callback!" << std::endl;
+}
+
+void but_speedMinus_cb(Fl_Widget* w, void* v)
+{
+	music.speedMinus();
+	std::cout << std::endl << "Button slow callback!" << std::endl;
 }
 
 
@@ -337,8 +370,10 @@ int main()
 	std::cout << "Efekt gitarowy - projekt" << std::endl;
 	std::cout << "Test Git\n";
 
-	
+
 	Fl_Window win(400, 200);
+	//win.color2(50);
+	win.color(150);
 	win.begin();
 
 	MyButton but_loadSound(10, 10, 105, 25, "Load Sound");
@@ -348,6 +383,11 @@ int main()
 	MyButton but_play(50, 50, 25, 25, ">");
 	but_play.shortcut('s');
 	but_play.callback(but_play_cb);
+	but_play.color(Fl_Color(100));
+	if (music.getActiveSound() == false)
+	{
+		but_play.color(Fl_Color(250));
+	}
 
 	MyButton but_pause(10, 50, 25, 25, "||");
 	but_pause.shortcut('p');
@@ -360,7 +400,7 @@ int main()
 	MyButton but_stop(50, 90, 25, 25, "o");
 	but_stop.shortcut('o');
 	but_stop.callback(but_stop_cb);
-	
+
 	MyButton but_rewind(10, 90, 25, 25, "<<");
 	but_rewind.shortcut('a');
 	but_rewind.callback(but_rewind_cb);
@@ -372,14 +412,21 @@ int main()
 	MyButton but_volumePlus(170, 10, 25, 25, "+");
 	but_volumePlus.shortcut('+');
 	but_volumePlus.callback(but_volumePlus_cb);
+	
 
 	MyButton but_volumeMinus(130, 10, 25, 25, "-");
 	but_volumeMinus.shortcut('-');
 	but_volumeMinus.callback(but_volumeMinus_cb);
-	
-	MyButton but_speed(210, 10, 30, 25, ">>x");
-	but_speed.shortcut('x');
-	but_speed.callback(but_speed_cb);
+	but_volumeMinus.color2(150);
+	but_volumeMinus.color(50);
+
+	MyButton but_speedPlus(255, 10, 30, 25, ">>x");
+	but_speedPlus.shortcut('x');
+	but_speedPlus.callback(but_speedPlus_cb);
+
+	MyButton but_speedMinus(210, 10, 30, 25, "<<x");
+	but_speedMinus.shortcut('z');
+	but_speedMinus.callback(but_speedMinus_cb);
 
 
 
