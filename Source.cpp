@@ -28,6 +28,9 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Input.H>
+#include <FL/Fl_Box.H>
+//#include <FL/Fl_Text_Display.H>
 
 using namespace std;
 using std::string;
@@ -362,6 +365,56 @@ void but_speedMinus_cb(Fl_Widget* w, void* v)
 	std::cout << std::endl << "Button slow callback!" << std::endl;
 }
 
+// ########################################
+// CLOSE WINDOW
+
+void but_yes_cb(Fl_Widget* w, void* v)
+{
+	std::cout << std::endl << "Button YES callback!" << std::endl;
+	exit(0);
+}
+
+void but_no_cb(Fl_Widget *w, void* v)
+{
+
+	std::cout << std::endl << "Button NO callback!" << std::endl;
+}
+
+
+void but_exit_cb(Fl_Widget* w, void* v)
+{
+	Fl_Window exit_window(200, 90,"Exit");
+
+	
+	Fl_Box text(40,10,130,30,"Are you sure to exit?");
+
+	exit_window.color(9);
+	exit_window.begin();
+
+
+	MyButton but_yes(50, 40, 40, 30, "Yes");
+	but_yes.shortcut('y');
+	but_yes.callback(but_yes_cb);
+
+	MyButton but_no(110, 40, 40, 30, "No");
+	but_no.shortcut('n');
+	but_no.callback(but_no_cb); // to correct! to fix!
+	if (Fl::event_button() == 'n')
+	{
+		exit(1);
+	}
+
+
+	exit_window.end();
+	exit_window.show();
+	
+
+		Fl::run();
+		~Fl::run();
+	
+	
+	//exit(0);
+}
 
 
 int main()
@@ -376,11 +429,37 @@ int main()
 	win.color(150);
 	win.begin();
 
-	MyButton but_loadSound(10, 10, 105, 25, "Load Sound");
+	MyButton but_loadSound(10, 10, 105, 30, "@filenew Load Sound");
 	but_loadSound.shortcut('l');
 	but_loadSound.callback(but_loadSound_cb);
 
-	MyButton but_play(50, 50, 25, 25, ">");
+	MyButton but_volumePlus(170, 10, 30, 30, "+");
+	but_volumePlus.shortcut('+');
+	but_volumePlus.callback(but_volumePlus_cb);
+
+
+	MyButton but_volumeMinus(130, 10, 30, 30, "-");
+	but_volumeMinus.shortcut('-');
+	but_volumeMinus.callback(but_volumeMinus_cb);
+	but_volumeMinus.color2(150);
+	but_volumeMinus.color(50);
+
+	MyButton but_speedMinus(210, 10, 30, 30, "@<<");
+	but_speedMinus.shortcut('z');
+	but_speedMinus.callback(but_speedMinus_cb);
+
+	MyButton but_speedPlus(255, 10, 30, 30, "@>>");
+	but_speedPlus.shortcut('x');
+	but_speedPlus.callback(but_speedPlus_cb);
+
+	MyButton but_exit(300, 10, 50, 30, "Exit");
+	but_exit.shortcut(FL_Escape);
+	but_exit.callback(but_exit_cb);
+
+
+	//50
+
+	MyButton but_play(50, 50, 30, 30, "@>");
 	but_play.shortcut('s');
 	but_play.callback(but_play_cb);
 	but_play.color(Fl_Color(100));
@@ -389,47 +468,30 @@ int main()
 		but_play.color(Fl_Color(250));
 	}
 
-	MyButton but_pause(10, 50, 25, 25, "||");
+	MyButton but_pause(10, 50, 30, 30,"||");
 	but_pause.shortcut('p');
 	but_pause.callback(but_pause_cb);
 
-	MyButton but_loop(90, 50, 25, 25, "@");
+	
+	MyButton but_loop(90, 50, 30, 30, "@refresh");
 	but_loop.shortcut('i');
 	but_loop.callback(but_loop_cb);
 
-	MyButton but_stop(50, 90, 25, 25, "o");
+	
+	MyButton but_stop(50, 90, 30, 30, "@square");
 	but_stop.shortcut('o');
 	but_stop.callback(but_stop_cb);
 
-	MyButton but_rewind(10, 90, 25, 25, "<<");
+
+	MyButton but_rewind(10, 90, 30, 30, "@|<");
 	but_rewind.shortcut('a');
 	but_rewind.callback(but_rewind_cb);
 
-	MyButton but_forward(90, 90, 25, 25, ">>");
+	MyButton but_forward(90, 90, 30, 30, "@>|");
 	but_forward.shortcut('d');
 	but_forward.callback(but_forward_cb);
 
-	MyButton but_volumePlus(170, 10, 25, 25, "+");
-	but_volumePlus.shortcut('+');
-	but_volumePlus.callback(but_volumePlus_cb);
 	
-
-	MyButton but_volumeMinus(130, 10, 25, 25, "-");
-	but_volumeMinus.shortcut('-');
-	but_volumeMinus.callback(but_volumeMinus_cb);
-	but_volumeMinus.color2(150);
-	but_volumeMinus.color(50);
-
-	MyButton but_speedPlus(255, 10, 30, 25, ">>x");
-	but_speedPlus.shortcut('x');
-	but_speedPlus.callback(but_speedPlus_cb);
-
-	MyButton but_speedMinus(210, 10, 30, 25, "<<x");
-	but_speedMinus.shortcut('z');
-	but_speedMinus.callback(but_speedMinus_cb);
-
-
-
 	win.end();
 	win.show();
 
