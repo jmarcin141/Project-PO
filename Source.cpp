@@ -1,40 +1,9 @@
-//#include<FL/Fl.h>
-//#include<FL/Fl_Box.h>
-//#include<FL/Fl_Window.h>
-
-//int main()
-//{
-//	Fl_Window window(200, 200, "Window title");
-//	Fl_Box box(0, 0, 200, 200, "Hey, I mean, Hello, World!");
-//	window.show();
-//	return Fl::run();
-//}
+#define _CRT_SECURE_NO_DEPRECATE // odczyt fstream , 
 
 
+#include "headers.h"
+//#include "buttons_callback.h"
 
-
-
-
-//#define _CRT_SECURE_NO_DEPRECATE // odczyt fstream , 
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <memory>
-
-#include <SFML/Window.hpp>
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
-
-#include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Input.H>
-#include <FL/Fl_Box.H>
-#include <FL/Fl_Light_Button.H>
-#include <FL/Fl_Value_Slider.H>
-#include <FL/Fl_Scrollbar.H>
-#include <FL/fl_ask.H>
-//#include <FL/Fl_Text_Display.H>
 
 using namespace std;
 using std::string;
@@ -71,285 +40,54 @@ int getFileSize(FILE *inFile);
 
 
 
-class MyButton : public Fl_Button
-{
-	static int count;
-public:
-	MyButton(int x, int y, int w, int h, const char*l = 0)
-		:Fl_Button(x, y, w, h, l) {}
-
-	int handle(int e)
-	{
-		int ret = Fl_Button::handle(e);
-		cout << endl << count++ << " ******** button " << label() << " receives ";
-
-
-		switch (e)
-		{
-		case FL_PUSH:
-			cout << "push" << " event and returns:" << ret << endl;
-			break;
-
-		case FL_RELEASE:
-			cout << "release" << " event and returns:" << ret << endl;
-			break;
-
-		case FL_ENTER:
-			color(FL_CYAN);
-			cout << "enter" << " event and returns:" << ret << endl;
-			redraw();
-			break;
-
-		case FL_LEAVE:
-			color(FL_BACKGROUND_COLOR);
-			cout << "leave" << " event and returns:" << ret << endl;
-			redraw();
-			break;
-
-		case FL_DRAG:
-			cout << "drag" << " event and returns:" << ret << endl;
-			break;
-
-		case FL_FOCUS:
-			cout << "focus" << " event and returns:" << ret << endl;
-			break;
-
-		case FL_UNFOCUS:
-			cout << "unfocus" << " event and returns:" << ret << endl;
-			break;
-
-		case FL_KEYDOWN:
-			cout << "keydown" << " event and returns:" << ret << endl;
-			break;
-
-		case FL_KEYUP:
-			if (Fl::event_key() == shortcut()) {
-				box(FL_UP_BOX);
-				redraw();
-				ret = 1; //return handled so keyup event stops
-			}         //being sent to ALL other buttons unecessarily
-
-			cout << "keyup" << " event and returns:" << ret << endl;
-			break;
-
-		case FL_CLOSE:
-			cout << "close" << " event and returns:" << ret << endl;
-			break;
-
-		case FL_MOVE:
-			cout << "move" << " event and returns:" << ret << endl;
-			break;
-
-		case FL_SHORTCUT:
-			if (Fl::event_key() == shortcut()) {
-				box(FL_DOWN_BOX);
-				redraw();
-			}
-			cout << "shortcut" << " event and returns:" << ret << endl;
-			break;
-
-		case FL_DEACTIVATE:
-			cout << "deactivate" << " event and returns:" << ret << endl;
-			break;
-
-		case FL_ACTIVATE:
-			cout << "activate" << " event and returns:" << ret << endl;
-			break;
-
-		case FL_HIDE:
-			cout << "hide" << " event and returns:" << ret << endl;
-			break;
-
-		case FL_SHOW:
-			cout << "show" << " event and returns:" << ret << endl;
-			break;
-
-		case FL_PASTE:
-			cout << "paste" << " event and returns:" << ret << endl;
-			break;
-
-		case  FL_SELECTIONCLEAR:
-			cout << "selectionclear" << " event and returns:" << ret << endl;
-			break;
-
-		case  FL_MOUSEWHEEL:
-			cout << "mousewheel" << " event and returns:" << ret << endl;
-			break;
-
-		case  FL_NO_EVENT:
-			cout << "no event" << " and returns:" << ret << endl;
-			break;
-
-
-
-		}
-		return(ret);
-	}
-
-};
-
-
-
-
-class Music
-{
-private:
-	sf::SoundBuffer buf;
-	sf::Sound sound;
-
-public:
-	Music() {}
-
-	//~Music() {}
-
-	void loadSound()
-	{
-		if (!buf.loadFromFile("E:\\AGH\\Semestr 4\\PO\\Projekty\\Projekt-Efekt-Gitarowy\\imperial_march.wav"))
-		{
-			std::cout << "not loaded" << std::endl;
-			//return -1;
-		}
-		else { std::cout << "loaded" << std::endl; }
-		sound.setBuffer(buf);
-	}
-
-	bool getActiveSound()
-	{
-		if (sound.getStatus() == sf::Sound::Playing) //sf::Sound::Status::Playing 
-		{
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
-	void playSoud()
-	{
-		sound.play();
-	}
-
-	void stopSound()
-	{
-		sound.stop();
-	}
-
-	void pauseSound()
-	{
-		sound.pause();
-	}
-
-	void loopSound()
-	{
-		if (sound.getLoop() == true) {
-			sound.setLoop(false);
-		}
-		else { sound.setLoop(true); }
-	}
-
-	void rewindSound()
-	{
-		if (sound.getPlayingOffset() > sf::seconds(5) ) {
-			sound.setPlayingOffset(sound.getPlayingOffset() - sf::seconds(5));
-		}
-		else { sound.setPlayingOffset(sf::seconds(0)); }
-	}
-
-	void forwardSound()
-	{
-		sound.setPlayingOffset(sf::seconds(5) + sound.getPlayingOffset());
-	}
-
-	void volumePlus()
-	{
-		//Volume is...(between 0 - 100);
-		if (sound.getVolume() <= 100) {
-			sound.setVolume(sound.getVolume() + 5);
-		}
-	}
-	
-	void volumeMinus()
-	{
-		//Volume is...(between 0 - 100);
-		if (sound.getVolume() >= 5) {
-			sound.setVolume(sound.getVolume() - 5);
-		}
-	}
-
-	void setVolume(int vol)
-	{
-		sound.setVolume(vol);
-	}
-
-
-	void speedPlus()
-	{
-		if (sound.getPitch() <= 2.f) {
-			sound.setPitch(sound.getPitch() + 0.2f);
-		} 
-		else if (sound.getPitch() > 2.f && sound.getPitch() < 7.f) {
-			sound.setPitch(sound.getPitch() + 1.f);
-		}
-		else { sound.setPitch(1.f); }
-	}
-
-	void speedMinus()
-	{
-		if (sound.getPitch() <= 2.f && sound.getPitch() > 0.3f ) {
-			sound.setPitch(sound.getPitch() - 0.2f);
-		}
-		else if (sound.getPitch() > 2.f && sound.getPitch() < 7.f) {
-			sound.setPitch(sound.getPitch() - 1.f);
-		}
-	}
-};
-
-
-int MyButton::count = 0;
-
 Music music;
 
-void but_loadSound_cb(Fl_Widget* w, void*v) 
+void but_loadSound_cb(Fl_Widget* w, void*v)
 {
+	//((Fl_Window*)v)->hide()
 	music.loadSound();
 	std::cout << std::endl << "Button loadSound callback!" << std::endl;
 }
 
+
 void but_play_cb(Fl_Widget* w, void* v)
 {
 	music.playSoud();
-	cout << endl << "Button play callback!" << endl;
+	std::cout << std::endl << "Button play callback!" << std::endl;
 }
 
 void but_pause_cb(Fl_Widget* w, void* v)
 {
 	music.pauseSound();
-	cout << endl << "Button pause callback!" << endl;
+	std::cout << std::endl << "Button pause callback!" << std::endl;
 }
 
 void but_loop_cb(Fl_Widget* w, void* v)
 {
 	music.loopSound();
-	cout << endl << "Button loop callback!" << endl;
+	std::cout << std::endl << "Button loop callback!" << std::endl;
 }
 
 void but_stop_cb(Fl_Widget* w, void* v)
 {
 	music.stopSound();
-	cout << endl << "Button stop callback!" << endl;
+	std::cout << std::endl << "Button stop callback!" << std::endl;
 }
 
 void but_rewind_cb(Fl_Widget* w, void* v)
 {
 	music.rewindSound();
-	cout << endl << "Button rewind callback!" << endl;
+	std::cout << std::endl << "Button rewind callback!" << std::endl;
 }
 
 void but_forward_cb(Fl_Widget* w, void* v)
 {
 	music.forwardSound();
-	cout << endl << "Button forward callback!" << endl;
+	std::cout << std::endl << "Button forward callback!" << std::endl;
 }
+
+
+
 
 //slider
 void but_volume_set_cb(Fl_Widget *w, void *v)
@@ -386,24 +124,13 @@ void but_speedMinus_cb(Fl_Widget* w, void* v)
 // ########################################
 // CLOSE WINDOW
 
-void but_yes_cb(Fl_Widget* w, void* v)
-{
-	std::cout << std::endl << "Button YES callback!" << std::endl;
-	exit(0);
-}
-
-void but_no_cb(Fl_Widget *w, void* v)
-{
-
-	std::cout << std::endl << "Button NO callback!" << std::endl;
-}
-
 
 void but_exit_cb(Fl_Widget *w, void* v)
 {
 	if (fl_ask("Do you want to exit?"))
+	{
 		((Fl_Window*)v)->hide();//zamkniecie okna glownego win, przy pomocy wskaznika
-
+	}
 
 	//Fl_Window exit_window(200, 90,"Exit");
 
@@ -436,12 +163,20 @@ void but_exit_cb(Fl_Widget *w, void* v)
 
 	//exit_window.end();
 	//exit_window.show();
-	//
 
 	//	Fl::run();
-	//
-	
 	//exit(0);
+}
+
+
+void but_yes_cb(Fl_Widget* w, void* v)
+{
+	std::cout << std::endl << "Button YES callback!" << std::endl;
+}
+
+void but_no_cb(Fl_Widget *w, void* v)
+{
+	std::cout << std::endl << "Button NO callback!" << std::endl;
 }
 
 
@@ -449,7 +184,6 @@ int main()
 {
 	system("Color 0B");
 	std::cout << "Efekt gitarowy - projekt" << std::endl;
-	std::cout << "Test Git\n";
 
 
 	Fl_Window win(400, 200);
@@ -458,43 +192,28 @@ int main()
 
 	Fl_Button but_loadSound(10, 10, 110, 30, "@filenew Load Sound");
 	but_loadSound.shortcut('l');
-	but_loadSound.callback(but_loadSound_cb);
+	but_loadSound.callback(but_loadSound_cb,&music);
 	but_loadSound.color2(156);
 	but_loadSound.color(156);
 
 
 	// slider volume
 	Fl_Slider slider_volume(130, 10, 90, 15, "volume");
-	//Fl_Scrollbar s(130, 130, 90, 15, "volume");
-	//s.minimum(5);
-	//s.maximum(100);
-	//s.type(FL_HOR_NICE_SLIDER);
-
-	//slider_volume.callback(but_volumeMinus_cb);
 	slider_volume.type(FL_HOR_NICE_SLIDER);
 	slider_volume.maximum(100);
 	slider_volume.minimum(5);
 	slider_volume.scrollvalue(100, 10, 0, 100);
-	slider_volume.redraw();
-	//slider_volume.precision(5);
-	//slider_volume.value();
-	//slider_volume.activate();
-	//slider_volume.redraw();
 	slider_volume.callback(but_volume_set_cb,&slider_volume);
-
-
+	slider_volume.color(156);
+	slider_volume.color2(2); //GREEN
 	
+
 	//Fl_Button but_volumePlus(170, 10, 30, 30, "+");
-	//but_volumePlus.shortcut('+');
 	//but_volumePlus.callback(but_volumePlus_cb);
-	//but_volumePlus.color2(90);
-	//but_volumePlus.color(90);
 
 	//Fl_Button but_volumeMinus(130, 10, 30, 30, "-");
-	//but_volumeMinus.shortcut('-');
 	//but_volumeMinus.callback(but_volumeMinus_cb);
-	//but_volumeMinus.color2(180);
-	//but_volumeMinus.color(180);
+	//
 
 	Fl_Button but_speedMinus(230, 10, 30, 30, "@<<");
 	but_speedMinus.shortcut('z');
@@ -515,16 +234,11 @@ int main()
 	but_exit.color(Fl_Color(157));
 
 
-	//50
-
 	Fl_Button but_play(50, 50, 30, 30, "@>");
 	but_play.shortcut('s');
 	but_play.callback(but_play_cb);
 	but_play.color(Fl_Color(157));
-	if (music.getActiveSound() == true)
-	{
-		but_play.color2(Fl_Color(250));
-	}
+	but_play.color2(Fl_Color(157));
 
 	Fl_Button but_pause(10, 50, 30, 30,"||");
 	but_pause.shortcut('p');
@@ -560,11 +274,51 @@ int main()
 	win.show();
 
 
-
-
-
 	
-/*
+		std::vector<sf::Int16> samples;
+		for (int t = 0; t < 200; t++)
+		{
+			for (int f = 20; f < 16000; f+=20)
+			{
+				samples.push_back(5000 * sin(2 * 3.14 * f * t));
+			}
+		}
+
+		for (int t = 200; t > 500; t++)
+		{
+			for (int f = 16000; f >20; f-20)
+			{
+				samples.push_back(5000 * sin(2 * 3.14 * f * t));
+			}
+		}
+
+		
+		music.loadSamples(samples, 44100);
+		
+		
+		music.playSoud();
+		//music.loopSound();
+
+
+		sf::SoundBuffer buf1;
+		buf1.loadFromFile("E:\\AGH\\Semestr 4\\PO\\Projekty\\Projekt-Efekt-Gitarowy\\imperial_march.wav");
+	
+		buf1.getSamples();
+
+		buf1.saveToFile("test.wav");
+		sf::Sound sound1;
+		//sound1.setBuffer(buf1);
+		//sound1.play();
+
+		sf::Music sound2;
+		sound2.openFromFile("test.wav");
+		sound2.play();
+
+	//to do:
+		//funkcja do zapisywania sampli, 
+		//inna funkcja odczyta sample do wektora, modyfikacja, dodanie echa, inne efekty,
+		//odtworzenie
+	/*
 
 
 
@@ -652,8 +406,8 @@ int main()
 
 		getchar();
 
-
-	system("Pause"); */
+		*/
+	//system("Pause");  
 	return(Fl::run());
 	//return 0;
 }
@@ -669,3 +423,124 @@ int getFileSize(FILE *inFile) {
 	return fileSize;
 }
 
+
+
+//////////class MyButton : public Fl_Button
+//////////{
+//////////	static int count;
+//////////public:
+//////////	MyButton(int x, int y, int w, int h, const char*l = 0)
+//////////		:Fl_Button(x, y, w, h, l) {}
+//////////
+//////////	int handle(int e)
+//////////	{
+//////////		int ret = Fl_Button::handle(e);
+//////////		cout << endl << count++ << " ******** button " << label() << " receives ";
+//////////
+//////////
+//////////		switch (e)
+//////////		{
+//////////		case FL_PUSH:
+//////////			cout << "push" << " event and returns:" << ret << endl;
+//////////			break;
+//////////
+//////////		case FL_RELEASE:
+//////////			cout << "release" << " event and returns:" << ret << endl;
+//////////			break;
+//////////
+//////////		case FL_ENTER:
+//////////			color(FL_CYAN);
+//////////			cout << "enter" << " event and returns:" << ret << endl;
+//////////			redraw();
+//////////			break;
+//////////
+//////////		case FL_LEAVE:
+//////////			color(FL_BACKGROUND_COLOR);
+//////////			cout << "leave" << " event and returns:" << ret << endl;
+//////////			redraw();
+//////////			break;
+//////////
+//////////		case FL_DRAG:
+//////////			cout << "drag" << " event and returns:" << ret << endl;
+//////////			break;
+//////////
+//////////		case FL_FOCUS:
+//////////			cout << "focus" << " event and returns:" << ret << endl;
+//////////			break;
+//////////
+//////////		case FL_UNFOCUS:
+//////////			cout << "unfocus" << " event and returns:" << ret << endl;
+//////////			break;
+//////////
+//////////		case FL_KEYDOWN:
+//////////			cout << "keydown" << " event and returns:" << ret << endl;
+//////////			break;
+//////////
+//////////		case FL_KEYUP:
+//////////			if (Fl::event_key() == shortcut()) {
+//////////				box(FL_UP_BOX);
+//////////				redraw();
+//////////				ret = 1; //return handled so keyup event stops
+//////////			}         //being sent to ALL other buttons unecessarily
+//////////
+//////////			cout << "keyup" << " event and returns:" << ret << endl;
+//////////			break;
+//////////
+//////////		case FL_CLOSE:
+//////////			cout << "close" << " event and returns:" << ret << endl;
+//////////			break;
+//////////
+//////////		case FL_MOVE:
+//////////			cout << "move" << " event and returns:" << ret << endl;
+//////////			break;
+//////////
+//////////		case FL_SHORTCUT:
+//////////			if (Fl::event_key() == shortcut()) {
+//////////				box(FL_DOWN_BOX);
+//////////				redraw();
+//////////			}
+//////////			cout << "shortcut" << " event and returns:" << ret << endl;
+//////////			break;
+//////////
+//////////		case FL_DEACTIVATE:
+//////////			cout << "deactivate" << " event and returns:" << ret << endl;
+//////////			break;
+//////////
+//////////		case FL_ACTIVATE:
+//////////			cout << "activate" << " event and returns:" << ret << endl;
+//////////			break;
+//////////
+//////////		case FL_HIDE:
+//////////			cout << "hide" << " event and returns:" << ret << endl;
+//////////			break;
+//////////
+//////////		case FL_SHOW:
+//////////			cout << "show" << " event and returns:" << ret << endl;
+//////////			break;
+//////////
+//////////		case FL_PASTE:
+//////////			cout << "paste" << " event and returns:" << ret << endl;
+//////////			break;
+//////////
+//////////		case  FL_SELECTIONCLEAR:
+//////////			cout << "selectionclear" << " event and returns:" << ret << endl;
+//////////			break;
+//////////
+//////////		case  FL_MOUSEWHEEL:
+//////////			cout << "mousewheel" << " event and returns:" << ret << endl;
+//////////			break;
+//////////
+//////////		case  FL_NO_EVENT:
+//////////			cout << "no event" << " and returns:" << ret << endl;
+//////////			break;
+//////////
+//////////
+//////////
+//////////		}
+//////////		return(ret);
+//////////	}
+//////////
+//////////};
+//////////
+//////////
+//////////int MyButton::count = 0;
