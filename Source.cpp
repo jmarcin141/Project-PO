@@ -275,12 +275,12 @@ int main()
 
 
 	
-		std::vector<sf::Int16> samples;
+		std::vector<sf::Int16> samples_gen;
 		for (int t = 0; t < 200; t++)
 		{
 			for (int f = 20; f < 16000; f+=20)
 			{
-				samples.push_back(5000 * sin(2 * 3.14 * f * t));
+				samples_gen.push_back(5000 * sin(2 * 3.14 * f * t));
 			}
 		}
 
@@ -288,31 +288,65 @@ int main()
 		{
 			for (int f = 16000; f >20; f-20)
 			{
-				samples.push_back(5000 * sin(2 * 3.14 * f * t));
+				samples_gen.push_back(5000 * sin(2 * 3.14 * f * t));
 			}
 		}
+		
+		int fx = 44100;
 
-		
-		music.loadSamples(samples, 44100);
-		
-		
-		music.playSoud();
+		//const std::vector<sf::Int16> samples1 = samples;
+		sf::SoundBuffer bufx;
+
+			bufx.loadFromSamples(samples_gen.data(), samples_gen.size(), 1, fx);
+			bufx.saveToFile("generate1.wav");
+/*
+			music.loadSamples(samples, 44100);
+
+			music.playSoud();*/
 		//music.loopSound();
 
 
 		sf::SoundBuffer buf1;
-		buf1.loadFromFile("E:\\AGH\\Semestr 4\\PO\\Projekty\\Projekt-Efekt-Gitarowy\\imperial_march.wav");
-	
-		buf1.getSamples();
+		/*buf1.loadFromFile("E:\\AGH\\Semestr 4\\PO\\Projekty\\Projekt-Efekt-Gitarowy\\generate1.wav");
 
-		buf1.saveToFile("test.wav");
+		const sf::Int16 *x = buf1.getSamples();
+
+		//for (int i = 0; i < buf1.getSampleCount(); i++)
+		std::vector<sf::Int16> Dsamples;
+			Dsamples.push_back(*buf1.getSamples());
+
+		//buf1.saveToFile("test.wav");
+			for (int i = 0; i < Dsamples.size(); i++)
+			{
+				std::cout << "Sample number:" << i << "is:   \t" << Dsamples.at(i) << std::endl;
+			}
+
+			// echo
+
+			int delay = 300;
+			std::vector<sf::Int16> _samples;
+			for (int i = 300; i < 3000; i++)
+			{
+				//_samples.push_back(samples.at(i));
+				//Dsamples.at(i + delay) = Dsamples.at(i);
+			}
+
+			*/
+
+		//bufx.loadFromSamples(Dsamples.data(), Dsamples.size(), 1, fx);
+		//bufx.saveToFile("generate.wav");
+
+		//music.loadSamples(Dsamples, 44100);
+
+		//music.playSoud();
+
 		sf::Sound sound1;
 		//sound1.setBuffer(buf1);
 		//sound1.play();
 
 		sf::Music sound2;
 		sound2.openFromFile("test.wav");
-		sound2.play();
+		//sound2.play();
 
 	//to do:
 		//funkcja do zapisywania sampli, 
