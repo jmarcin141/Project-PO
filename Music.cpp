@@ -13,8 +13,12 @@ Music::~Music() {};
 			std::cout << "not loaded" << std::endl;
 			//return -1;
 		}
-		else { std::cout << "loaded" << std::endl; }
-		sound.setBuffer(buf);
+		else 
+		{ 
+			std::cout << "loaded" << std::endl;
+			sound.setBuffer(buf);
+		}
+		
 	};
 
 	bool Music::getActiveSound()

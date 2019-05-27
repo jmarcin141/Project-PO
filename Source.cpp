@@ -273,7 +273,7 @@ int main()
 	win.end();
 	win.show();
 
-
+	//########################## generowanie sampli, odtworzenie dzwieku z sampli #####################
 	
 		std::vector<sf::Int16> samples_gen;
 		for (int t = 0; t < 200; t++)
@@ -286,52 +286,95 @@ int main()
 
 		for (int t = 200; t > 500; t++)
 		{
-			for (int f = 16000; f >20; f-20)
+			for (int f = 16000; f >20; f-=20)
 			{
 				samples_gen.push_back(5000 * sin(2 * 3.14 * f * t));
 			}
 		}
 		
-		int fx = 44100;
+		int fs = 44100;
 
 		//const std::vector<sf::Int16> samples1 = samples;
-		sf::SoundBuffer bufx;
+		sf::SoundBuffer bufg;
 
-			bufx.loadFromSamples(samples_gen.data(), samples_gen.size(), 1, fx);
-			bufx.saveToFile("generate1.wav");
-/*
-			music.loadSamples(samples, 44100);
+			bufg.loadFromSamples(samples_gen.data(), samples_gen.size(), 1, fs);
+			bufg.saveToFile("generate1.wav");
 
-			music.playSoud();*/
-		//music.loopSound();
+			sf::Sound soundG;
+			soundG.setBuffer(bufg);
+			//soundG.play();
+
+			//odtworzenie przy pomocy bufora na gorze, oraz przy pomocy wczytania sampli na dole
+
+			//music.loadSamples(samples_gen, fs);
+			//music.playSoud();
+			//music.loopSound();
 
 
-		sf::SoundBuffer buf1;
-		/*buf1.loadFromFile("E:\\AGH\\Semestr 4\\PO\\Projekty\\Projekt-Efekt-Gitarowy\\generate1.wav");
+//############## modyfikacja sampli w pliku *wav ##################
 
-		const sf::Int16 *x = buf1.getSamples();
+			sf::Sound soundM;
+		sf::SoundBuffer bufM; //modified
+		if (!bufM.loadFromFile("E:\\AGH\\Semestr 4\\PO\\Projekty\\Projekt-Efekt-Gitarowy\\Projekt-Efekt-Gitarowy\\generate1.wav"))
+		{
+			std::cout << "Cannot open file *.wav!!" << std::endl;
+		}
+		else
+		{
+			std::cout << "Open *.wav" << std::endl;
+		}
+		//soundM.setBuffer(bufM);
+		//soundM.play();
+
+
+
+		const::sf::Int16 *sample = bufM.getSamples();
+
 
 		//for (int i = 0; i < buf1.getSampleCount(); i++)
 		std::vector<sf::Int16> Dsamples;
-			Dsamples.push_back(*buf1.getSamples());
+		
+			//Dsamples.push_back(*sample);
 
 		//buf1.saveToFile("test.wav");
-			for (int i = 0; i < Dsamples.size(); i++)
+			for (int i = 0; i < bufM.getSampleCount(); i++)
 			{
-				std::cout << "Sample number:" << i << "is:   \t" << Dsamples.at(i) << std::endl;
+				Dsamples.push_back(*sample++);
+				//std::cout << "Sample number:" << i << "is:   \t" << *sample++ << std::endl;
 			}
 
-			// echo
+			//music.loadSamples(Dsamples, fs);
+			//music.playSoud();
 
-			int delay = 300;
-			std::vector<sf::Int16> _samples;
-			for (int i = 300; i < 3000; i++)
+			// ################## Poprawnie wczytano sample z vectora!! Hurrrrraaaaaa!! :D ##############
+			// Teraz mozna modyfikwoac sample w wektorze, dodawac efekty itd.
+
+
+			// echo efekt
+
+			int start = 20;
+			int delay = 10000;
+			int length = 90000;
+			float echo_force = 0.5;
+
+			std::vector<sf::Int16> delayedSamples;
+			for (start; start < length; start++)
 			{
-				//_samples.push_back(samples.at(i));
-				//Dsamples.at(i + delay) = Dsamples.at(i);
+				delayedSamples.push_back(Dsamples.at(start));
+				//Dsamples.at(i + delay) = Dsamples.at(i) + delayedSamples.at(i);
 			}
 
-			*/
+			for (int i = 0; i < delayedSamples.size(); i++)
+			{
+				//delayedSamples.push_back(Dsamples.at(i));
+				Dsamples.at(i + delay) = Dsamples.at(i + delay) + echo_force*delayedSamples.at(i);
+			}
+			//(Dsamples.at(i + start))/100000 +2*
+
+
+			music.loadSamples(Dsamples, fs);
+			music.playSoud();
+			
 
 		//bufx.loadFromSamples(Dsamples.data(), Dsamples.size(), 1, fx);
 		//bufx.saveToFile("generate.wav");
