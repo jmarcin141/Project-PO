@@ -269,6 +269,26 @@ int main()
 	but_forward.callback(but_forward_cb);
 	but_forward.color2(Fl_Color(157));
 	but_forward.color(Fl_Color(157));
+
+
+	// Effects Buttons
+
+	Fl_Light_Button but_echo(230, 50, 100, 30, "Echo");
+	//but_loop.callback(but_loop_cb);
+	but_echo.color2(Fl_Color(58));
+	but_echo.color(Fl_Color(157));
+
+	Fl_Check_Button but_distortion(230, 90, 100, 30, "Distortion");
+	//but_loop.callback(but_loop_cb);
+	but_distortion.color2(Fl_Color(58));
+	but_distortion.color(Fl_Color(157));
+
+	Fl_Round_Button but_wah(230, 130, 100, 30, "Wah-Wah");
+	//but_loop.callback(but_loop_cb);
+	but_distortion.color2(Fl_Color(58));
+	but_distortion.color(Fl_Color(157));
+
+
 	
 	win.end();
 	win.show();

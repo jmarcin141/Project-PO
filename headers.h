@@ -22,11 +22,17 @@
 //########## FLTK - Windows, buttons, etc.###########
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
-#include <FL/Fl_Button.H>
+
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Box.H>
+
+#include <FL/Fl_Button.H>
 #include <FL/Fl_Light_Button.H>
+#include <FL/Fl_Check_Button.H>
+#include <FL/Fl_Round_Button.H>
+
 #include <FL/Fl_Value_Slider.H>
 #include <FL/Fl_Scrollbar.H>
+
 #include <FL/fl_ask.H> // Exit window
 //#include <FL/Fl_Text_Display.H>
