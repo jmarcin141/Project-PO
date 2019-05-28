@@ -11,5 +11,7 @@ public:
 	Echo();
 	~Echo();
 
+	// echo efekt
+	void setEcho(Music &music);
 };
 

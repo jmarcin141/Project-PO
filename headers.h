@@ -7,6 +7,7 @@
 
 //########## My classes, functions, etc. ############
 #include "Music.h"
+#include "Echo.h"
 
 //#include "but_loadSound_cb.h"
 

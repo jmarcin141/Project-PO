@@ -180,13 +180,19 @@ void but_no_cb(Fl_Widget *w, void* v)
 }
 
 
+void but_echo_cb(Fl_Widget *w, void* v)
+{
+	std::cout << std::endl << "Button echo callback!" << std::endl;
+	((Echo*)v)->setEcho(music);
+}
+
 int main()
 {
 	system("Color 0B");
 	std::cout << "Efekt gitarowy - projekt" << std::endl;
 
 
-	Fl_Window win(400, 200);
+	Fl_Window win(500, 350);
 	win.color(148);
 	win.begin();
 
@@ -195,6 +201,12 @@ int main()
 	but_loadSound.callback(but_loadSound_cb,&music);
 	but_loadSound.color2(156);
 	but_loadSound.color(156);
+
+	Fl_Button but_saveSound(10, 130, 110, 30, "@filenew Save Sound");
+	//but_loadSound.shortcut('s');
+	//but_saveSound.callback(but_saveSound_cb, &music);
+	but_saveSound.color2(156);
+	but_saveSound.color(156);
 
 
 	// slider volume
@@ -206,7 +218,6 @@ int main()
 	slider_volume.callback(but_volume_set_cb,&slider_volume);
 	slider_volume.color(156);
 	slider_volume.color2(2); //GREEN
-	
 
 	//Fl_Button but_volumePlus(170, 10, 30, 30, "+");
 	//but_volumePlus.callback(but_volumePlus_cb);
@@ -272,24 +283,69 @@ int main()
 
 
 	// Effects Buttons
+	Echo echo;
 
-	Fl_Light_Button but_echo(230, 50, 100, 30, "Echo");
-	//but_loop.callback(but_loop_cb);
+	Fl_Check_Button but_echo(230, 60, 100, 30, "Echo");
+	but_echo.callback(but_echo_cb,&echo);
 	but_echo.color2(Fl_Color(58));
 	but_echo.color(Fl_Color(157));
 
-	Fl_Check_Button but_distortion(230, 90, 100, 30, "Distortion");
+	// Sliders for effects
+	//Echo
+	Fl_Value_Slider slider_echo_force(230, 90, 140, 15, "Force [%]");
+	slider_echo_force.type(FL_HOR_NICE_SLIDER);
+	slider_echo_force.maximum(200);
+	slider_echo_force.minimum(5);
+	slider_echo_force.scrollvalue(100, 1, 0, 200);
+	//slider_echo_force.callback(but_volume_set_cb, &slider_echo_force);
+	slider_echo_force.color(156);
+	slider_echo_force.color2(2); //GREEN
+
+
+	// Sliders for effects
+	Fl_Value_Slider slider_echo_delay(230, 130, 140, 15, "Delay [ms]");
+	slider_echo_delay.type(FL_HOR_NICE_SLIDER);
+	slider_echo_delay.maximum(5000);
+	slider_echo_delay.minimum(10);
+	slider_echo_delay.scrollvalue(100, 10, 0, 5000);
+	//slider_echo_delay.callback(but_volume_set_cb, &slider_echo_delay);
+	slider_echo_delay.color(156);
+	slider_echo_delay.color2(2); //GREEN
+
+	// Distortion
+	Fl_Check_Button but_distortion(230, 190, 100, 30, "Distortion");
 	//but_loop.callback(but_loop_cb);
 	but_distortion.color2(Fl_Color(58));
 	but_distortion.color(Fl_Color(157));
 
-	Fl_Round_Button but_wah(230, 130, 100, 30, "Wah-Wah");
+	Fl_Value_Slider slider_distortion(230, 220, 140, 15, "Level of amplitude");
+	slider_distortion.type(FL_HOR_NICE_SLIDER);
+	slider_distortion.maximum(100);
+	slider_distortion.minimum(5);
+	slider_distortion.scrollvalue(100, 10, 0, 100);
+	//slider_distortion.callback(but_volume_set_cb, &slider_distortion);
+	slider_distortion.color(156);
+	slider_distortion.color2(2); //GREEN
+
+	//Wah-Wah
+	Fl_Check_Button but_wah_wah(230, 270, 100, 30, "Wah-Wah");
 	//but_loop.callback(but_loop_cb);
-	but_distortion.color2(Fl_Color(58));
-	but_distortion.color(Fl_Color(157));
+	but_wah_wah.color2(Fl_Color(58));
+	but_wah_wah.color(Fl_Color(157));
 
-
+	Fl_Value_Slider slider_wah_wah(230, 300, 140, 15, "Wah-Wah");
+	slider_wah_wah.type(FL_HOR_NICE_SLIDER);
+	slider_wah_wah.maximum(100);
+	slider_wah_wah.minimum(5);
+	slider_wah_wah.scrollvalue(100, 10, 0, 100);
+	//slider_wah_wah.callback(but_volume_set_cb, &slider_wah_wah);
+	slider_wah_wah.color(156);
+	slider_wah_wah.color2(2); //GREEN
 	
+	//Modulator ko³owy (Ring modulator) wprowadza efekt
+	//silnie nieharmonicznego sygna³u, poprzez wymno¿enie
+	//sygna³u przez sinus o regulowanej czêstotliwoœci.
+
 	win.end();
 	win.show();
 
@@ -332,7 +388,7 @@ int main()
 
 
 //############## modyfikacja sampli w pliku *wav ##################
-
+/*
 			sf::Sound soundM;
 		sf::SoundBuffer bufM; //modified
 		if (!bufM.loadFromFile("E:\\AGH\\Semestr 4\\PO\\Projekty\\Projekt-Efekt-Gitarowy\\Projekt-Efekt-Gitarowy\\generate1.wav"))
@@ -369,13 +425,23 @@ int main()
 			// ################## Poprawnie wczytano sample z vectora!! Hurrrrraaaaaa!! :D ##############
 			// Teraz mozna modyfikwoac sample w wektorze, dodawac efekty itd.
 
+			*/
+
 
 			// echo efekt
 
-			int start = 20;
-			int delay = 10000;
-			int length = 90000;
-			float echo_force = 0.5;
+
+
+			/*music.loadSound();
+			std::vector<sf::Int16> Dsamples;
+			Dsamples = music.getSamples();
+
+			int start = 0;
+			int delay = 3000;
+			//int length = 500000;
+			sf::Uint64 length = music.getLength();
+			float echo_force = 1.5;
+
 
 			std::vector<sf::Int16> delayedSamples;
 			for (start; start < length; start++)
@@ -384,16 +450,16 @@ int main()
 				//Dsamples.at(i + delay) = Dsamples.at(i) + delayedSamples.at(i);
 			}
 
-			for (int i = 0; i < delayedSamples.size(); i++)
+			for (int i = 0; i < delayedSamples.size() - delay; i++)
 			{
 				//delayedSamples.push_back(Dsamples.at(i));
 				Dsamples.at(i + delay) = Dsamples.at(i + delay) + echo_force*delayedSamples.at(i);
 			}
-			//(Dsamples.at(i + start))/100000 +2*
-
-
 			music.loadSamples(Dsamples, fs);
-			music.playSoud();
+			*/
+			
+			//music.playSoud();
+			
 			
 
 		//bufx.loadFromSamples(Dsamples.data(), Dsamples.size(), 1, fx);

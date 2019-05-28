@@ -21,6 +21,28 @@ Music::~Music() {};
 		
 	};
 
+	sf::Uint64 Music::getLength()
+	{
+		return buf.getSampleCount();
+	}
+
+	std::vector<sf::Int16> Music::getSamples()
+	{
+		//############## modyfikacja sampli w pliku *wav ##################
+		const::sf::Int16 *samplePtr = buf.getSamples();
+		std::vector<sf::Int16> sampleFromBuffer;
+		for (int i = 0; i < buf.getSampleCount(); i++)
+		{
+			sampleFromBuffer.push_back(*(samplePtr++));
+			//std::cout << "Sample number:" << i << "is:   \t" << *samplePtr++ << std::endl;
+		}
+
+		// ################## Poprawnie wczytano sample z vectora!! Hurrrrraaaaaa!! Success :D ##############
+		// Teraz mozna modyfikwoac sample w wektorze, dodawac efekty itd.
+		return sampleFromBuffer;
+		
+	};
+
 	bool Music::getActiveSound()
 	{
 		sf::Sound::Status active = sound.getStatus();

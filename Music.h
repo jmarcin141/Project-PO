@@ -9,12 +9,16 @@ private:
 	sf::SoundBuffer buf;
 	sf::Sound sound;
 	float position;
-
 	std::vector<sf::Int16> samples;
 
 public:
 	Music();
 	~Music();
+
+	int fs = 44100;
+	sf::Uint64 getLength();
+
+	std::vector<sf::Int16> getSamples();
 
 	bool getActiveSound();
 
@@ -36,7 +40,7 @@ public:
 
 	void volumeMinus();
 
-	void setVolume(double vol);
+	void setVolume(double vol);	
 
 	void speedPlus();
 
