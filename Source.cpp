@@ -4,6 +4,8 @@
 #include "headers.h"
 //#include "buttons_callback.h"
 
+#include "EffectHandle.h"
+
 
 using namespace std;
 using std::string;
@@ -183,7 +185,10 @@ void but_no_cb(Fl_Widget *w, void* v)
 void but_echo_cb(Fl_Widget *w, void* v)
 {
 	std::cout << std::endl << "Button echo callback!" << std::endl;
-	((Echo*)v)->setEcho(music);
+	//((Echo*)v)->setEcho(music);
+
+	((Music*)v)->getSamples();
+	
 }
 
 int main()
@@ -286,7 +291,7 @@ int main()
 	Echo echo;
 
 	Fl_Check_Button but_echo(230, 60, 100, 30, "Echo");
-	but_echo.callback(but_echo_cb,&echo);
+	but_echo.callback(but_echo_cb,&music);
 	but_echo.color2(Fl_Color(58));
 	but_echo.color(Fl_Color(157));
 
@@ -348,6 +353,16 @@ int main()
 
 	win.end();
 	win.show();
+
+	//########################## Stworzenie kopii oryginalu, modyfikacje, efekty #####################
+	
+	music.loadSound();
+	std::vector<sf::Int16> effectSamples = music.getSamples();
+	Echo echo1;
+	echo1.setEcho(effectSamples);
+	music.loadSamples(effectSamples, music.fs);
+
+
 
 	//########################## generowanie sampli, odtworzenie dzwieku z sampli #####################
 	
