@@ -5,7 +5,7 @@
 class GUI
 {
 private:
-	Fl_Window win = {};
+	//Fl_Window win;
 	
 public:
 
@@ -45,7 +45,7 @@ public:
 	// CLOSE WINDOW
 
 
-	void but_exit_cb();// (Fl_Widget *w, void* v);
+	void but_exit_cb(Fl_Widget *w, void* v);
 
 
 	//~GUI();

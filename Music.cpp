@@ -21,10 +21,12 @@ Music::~Music() {};
 		
 	};
 
+
+
 	sf::Uint64 Music::getLength()
 	{
 		return buf.getSampleCount();
-	}
+	};
 
 	std::vector<sf::Int16> Music::getSamples()
 	{
@@ -114,6 +116,10 @@ Music::~Music() {};
 		sound.setVolume(static_cast<float>(vol));
 	};
 
+	void Music::setSpeed(float speed)
+	{
+		sound.setPitch(speed);
+	}
 
 	void Music::speedPlus()
 	{

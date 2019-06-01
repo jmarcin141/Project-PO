@@ -11,7 +11,7 @@
 class EffectBody 
 {
 public:
-	virtual std::vector<sf::Int16> effect(Music &music) = 0;
+	virtual void effect(std::vector<sf::Int16> &samples) = 0; //std::vector<sf::Int16> <>void
 
 	virtual ~EffectBody() = default;
 };

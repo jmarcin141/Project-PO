@@ -11,7 +11,7 @@ GUI::GUI(Music &music)
 
 int GUI::draw(Music &music)
 {
-	Fl_Window win(300, 200);
+	Fl_Window win(500, 400);
 	win.color(148);
 
 	win.begin();
@@ -19,6 +19,8 @@ int GUI::draw(Music &music)
 	Fl_Button but_loadSound(10, 10, 110, 30, "@filenew Load Sound");
 	but_loadSound.shortcut('l');
 	//but_loadSound.callback(but_loadSound_cb);
+
+
 	but_loadSound.color2(156);
 	but_loadSound.color(156);
 
@@ -60,7 +62,7 @@ int GUI::draw(Music &music)
 
 	Fl_Button but_exit(320, 10, 50, 30, "Exit");
 	but_exit.shortcut(FL_Escape);
-	but_exit.callback(but_exit_cb());
+	// but_exit.callback(but_exit_cb());
 	but_exit.color2(Fl_Color(157));
 	but_exit.color(Fl_Color(157));
 
@@ -103,7 +105,6 @@ int GUI::draw(Music &music)
 
 
 	// Effects Buttons
-	Echo echo;
 
 	Fl_Check_Button but_echo(230, 60, 100, 30, "Echo");
 	//but_echo.callback(but_echo_cb, &music);
@@ -193,7 +194,16 @@ void GUI::but_pause_cb(Fl_Widget* w, void* v)
 // CLOSE WINDOW
 
 
-void GUI::but_exit_cb()//(Fl_Widget *w, void* v)
+//void GUI::but_exit_cb(Fl_Widget *w, void* v)
+//{
+//	if (fl_ask("Do you want to exit?"))
+//	{
+//		((Fl_Window*)v)->hide();//zamkniecie okna glownego win, przy pomocy wskaznika
+//	}
+//}
+
+
+void GUI::but_exit_cb(Fl_Widget *w, void* v)
 {
 	if (fl_ask("Do you want to exit?"))
 	{

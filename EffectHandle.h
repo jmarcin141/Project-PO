@@ -21,8 +21,8 @@ public:
 		ECHO, DISTORTION, WAHWAH, EFFECTX
 	};
 
-	EffectHandle(EffectType type);
-	virtual std::vector<sf::Int16> effect(Music &music);
+	EffectHandle(EffectType type); 
+	virtual void effect(std::vector<sf::Int16> &samples);
 
 	virtual ~EffectHandle() = default;
 };

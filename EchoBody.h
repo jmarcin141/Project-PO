@@ -6,5 +6,5 @@
 class EchoBody : public EffectBody
 {
 public:
-	virtual std::vector<sf::Int16> EffectBody::effect(Music &music) override;
+	virtual void EffectBody::effect(std::vector<sf::Int16> &samples) override;
 };

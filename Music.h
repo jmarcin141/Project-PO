@@ -20,6 +20,8 @@ public:
 
 	std::vector<sf::Int16> getSamples();
 
+	void setSpeed(float speed);
+
 	bool getActiveSound();
 
 	void loadSound();

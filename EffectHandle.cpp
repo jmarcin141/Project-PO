@@ -27,7 +27,7 @@ EffectHandle::EffectHandle(EffectType type)
 	}
 }
 
-std::vector<sf::Int16> EffectHandle::effect(Music &music)
+void EffectHandle::effect(std::vector<sf::Int16> &samples)
 {
-	return fBodyObj->effect(music); // ?? czy na pewno dobrze?
+	return fBodyObj->effect(samples); // ?? czy na pewno dobrze?
 }
