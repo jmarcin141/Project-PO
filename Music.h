@@ -10,6 +10,8 @@ private:
 	sf::Sound sound;
 	float position;
 	std::vector<sf::Int16> samples;
+	
+	std::string fileName;
 
 public:
 	Music();
@@ -17,6 +19,10 @@ public:
 
 	int fs = 44100;
 	sf::Uint64 getLength();
+
+	void setFileName(std::string mFileName);
+
+	void saveSound(std::string soundName);
 
 	std::vector<sf::Int16> getSamples();
 

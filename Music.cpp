@@ -6,9 +6,20 @@ Music::Music() {};
 
 Music::~Music() {};
 
+void Music::setFileName(std::string mFileName)
+{
+	fileName = mFileName;
+}
+
+void Music::saveSound(std::string soundName)
+{
+	buf.saveToFile(soundName);
+}
+
+
 	void Music::loadSound()
 	{
-		if (!buf.loadFromFile("E:\\AGH\\Semestr 4\\PO\\Projekty\\Projekt-Efekt-Gitarowy\\imperial_march.wav"))
+		if (!buf.loadFromFile("E:\\AGH\\Semestr 4\\PO\\Projekty\\Projekt-Efekt-Gitarowy\\Projekt-Efekt-Gitarowy\\" + fileName + ".wav"))
 		{
 			std::cout << "not loaded" << std::endl;
 			//return -1;
