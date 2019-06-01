@@ -2,6 +2,7 @@
 
 #include "EffectBody.h"
 
+
 class EchoBody : public EffectBody
 {
 public:

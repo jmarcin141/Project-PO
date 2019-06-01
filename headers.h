@@ -9,6 +9,13 @@
 #include "Music.h"
 #include "Echo.h"
 
+
+//Music music;
+
+#include "EffectHandle.h"
+//#include "EchoBody.h"
+
+
 //#include "but_loadSound_cb.h"
 
 
@@ -37,3 +44,4 @@
 
 #include <FL/fl_ask.H> // Exit window
 //#include <FL/Fl_Text_Display.H>
+

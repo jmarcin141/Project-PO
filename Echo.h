@@ -1,6 +1,11 @@
 #pragma once
+
 #include "Music.h"
-#include <vector>
+//#include <vector>
+
+#include "headers.h"
+
+
 class Echo : public Music
 {
 private:

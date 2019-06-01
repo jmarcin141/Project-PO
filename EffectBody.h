@@ -1,10 +1,14 @@
 #pragma once
 
-#include <vector>
+//#include <vector>
 #include "Music.h"
-#include <SFML/Audio.hpp>
+//#include <SFML/Audio.hpp>
 
-class EffectBody
+//#include "headers.h"
+
+//#include "GlobalVariables.h"
+
+class EffectBody 
 {
 public:
 	virtual std::vector<sf::Int16> effect(Music &music) = 0;

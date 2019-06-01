@@ -1,9 +1,10 @@
 #pragma once
 
 
-
 #include "EffectBody.h"
 #include "EchoBody.h"
+
+
 //...#include "EffectBody.h"
 
 #include <memory>
@@ -12,7 +13,6 @@ class EffectHandle
 {
 private:
 	using BodyPtr = std::unique_ptr <EffectBody>;
-
 	BodyPtr fBodyObj;
 
 public:
