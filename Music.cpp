@@ -13,13 +13,13 @@ void Music::setFileName(std::string mFileName)
 
 void Music::saveSound(std::string soundName)
 {
-	buf.saveToFile(soundName);
+	buf.saveToFile("E:\\AGH\\Semestr 4\\PO\\Projekty\\Projekt-Efekt-Gitarowy\\Projekt-Efekt-Gitarowy\\My Music\\"+(soundName + ".wav"));
 }
 
 
 	void Music::loadSound()
 	{
-		if (!buf.loadFromFile("E:\\AGH\\Semestr 4\\PO\\Projekty\\Projekt-Efekt-Gitarowy\\Projekt-Efekt-Gitarowy\\" + fileName + ".wav"))
+		if (!buf.loadFromFile("E:\\AGH\\Semestr 4\\PO\\Projekty\\Projekt-Efekt-Gitarowy\\Projekt-Efekt-Gitarowy\\My Music\\" + fileName + ".wav"))
 		{
 			std::cout << "not loaded" << std::endl;
 			//return -1;

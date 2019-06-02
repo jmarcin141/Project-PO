@@ -20,7 +20,6 @@ void but_saveSound_cb(Fl_Widget* w, void*v)
 {
 	std::string name = ((Fl_Input*)v)->value();
 	music.saveSound(name);
-
 	std::cout << std::endl << "Button saveSound callback!" << std::endl;
 }
 
