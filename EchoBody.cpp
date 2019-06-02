@@ -8,10 +8,10 @@ void EchoBody::effect(std::vector<sf::Int16> &samples)
 	//music.loadSound();
 
 	int start = 0;
-	int delay = 3000;
+	//int delay = 3000;
 	//int length = 500000;
 	sf::Uint64 length = samples.size();
-	float echo_force = 1.5;
+	//float echoForce = 1.5;
 
 
 	std::vector<sf::Int16> delayedSamples;
@@ -24,10 +24,32 @@ void EchoBody::effect(std::vector<sf::Int16> &samples)
 	for (int i = 0; i < delayedSamples.size() - delay; i++)
 	{
 		//delayedSamples.push_back(Dsamples.at(i));
-		samples.at(i + delay) = samples.at(i + delay) + echo_force * delayedSamples.at(i);
+		samples.at(i + delay) = samples.at(i + delay) + echoForce * delayedSamples.at(i);
 	}
 	//return samples;
 }
+
+void EchoBody::setParamInt1(int param1)
+{
+	delay = param1;
+}
+
+void EchoBody::setParamFloat1(float param1)
+{
+	echoForce = param1;
+}
+
+//
+//void EchoBody::setEchoForce(float mEchoForce)
+//{
+//	echoForce = mEchoForce;
+//}
+//void EchoBody::setDelay(int mDelay)
+//{
+//	delay = mDelay;
+//}
+
+
 
 
 ////std::vector<sf::Int16> EchoBody::effect(Music &music)

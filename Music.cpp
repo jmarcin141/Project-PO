@@ -13,9 +13,12 @@ void Music::setFileName(std::string mFileName)
 
 void Music::saveSound(std::string soundName)
 {
-	buf.saveToFile("E:\\AGH\\Semestr 4\\PO\\Projekty\\Projekt-Efekt-Gitarowy\\Projekt-Efekt-Gitarowy\\My Music\\"+(soundName + ".wav"));
+	if (!(soundName == ""))
+	{
+		buf.saveToFile("E:\\AGH\\Semestr 4\\PO\\Projekty\\Projekt-Efekt-Gitarowy\\Projekt-Efekt-Gitarowy\\My Music\\" + (soundName + ".wav"));
+	}
+	else { std::cout << "Cannot save empty name .wav!" << std::endl; }
 }
-
 
 	void Music::loadSound()
 	{

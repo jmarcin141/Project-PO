@@ -18,11 +18,18 @@ private:
 public:
 	enum class EffectType
 	{
-		ECHO, DISTORTION, WAHWAH, EFFECTX
+		ECHO, DISTORTION, WAHWAH, EFFECTX, RINGMODULATOR
 	};
 
 	EffectHandle(EffectType type); 
 	virtual void effect(std::vector<sf::Int16> &samples);
+
+
+	virtual void setParamInt1(int param1);
+
+	//virtual void setParamInt2(int param2);
+
+	virtual void setParamFloat1(float param1);
 
 	virtual ~EffectHandle() = default;
 };

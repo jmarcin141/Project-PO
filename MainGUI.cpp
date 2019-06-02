@@ -6,20 +6,32 @@ Music music;
 Music oryginalMusic;
 Music effectsMusic;
 
+std::vector<int> vInt(3); // vector parametrow efektow
+//1-echo force
+//2-echo delay
+
+EffectHandle echoEffect(EffectHandle::EffectType::ECHO);
+
 
 void but_loadSound_cb(Fl_Widget* w, void*v)
 {
 	std::string name = ((Fl_Input*)v)->value();
 	music.setFileName(name);
 	music.loadSound();
+
+	oryginalMusic.setFileName(name);
+	effectsMusic.setFileName(name);
 	oryginalMusic.loadSound();
+	effectsMusic.loadSound();
+
 	std::cout << std::endl << "Button loadSound callback!" << std::endl;
 }
 
 void but_saveSound_cb(Fl_Widget* w, void*v)
 {
 	std::string name = ((Fl_Input*)v)->value();
-	music.saveSound(name);
+	//music.saveSound(name);
+	effectsMusic.saveSound(name);
 	std::cout << std::endl << "Button saveSound callback!" << std::endl;
 }
 
@@ -101,16 +113,6 @@ void but_exit_cb(Fl_Widget *w, void* v)
 }
 
 
-void but_echo_cb(Fl_Widget *w, void* v)
-{
-	std::cout << std::endl << "Button echo callback!" << std::endl;
-	std::vector<sf::Int16> samples = ((Music*)v)->getSamples();
-	//std::vector<sf::Int16> samples2;
-	EffectHandle efect(EffectHandle::EffectType::ECHO);
-	efect.effect(samples);
-	effectsMusic.loadSamples(samples, music.fs);
-}
-
 void but_changeSound_cb(Fl_Widget *w, void* v)
 {
 	std::cout << std::endl << "Button change sound callback!" << std::endl;
@@ -128,7 +130,34 @@ void but_changeSound_cb(Fl_Widget *w, void* v)
 		music = oryginalMusic;
 		//music.setSpeed(1.f);
 	}
+}
 
+void but_resetEffects_cb(Fl_Widget *w, void* v)
+{
+	effectsMusic = oryginalMusic;
+	std::cout << std::endl << "Button reset effects callback!" << std::endl;
+}
+
+
+
+void but_echo_cb(Fl_Widget *w, void* v)
+{
+	std::cout << std::endl << "Button echo callback!" << std::endl;
+	std::vector<sf::Int16> samples = ((Music*)v)->getSamples();
+	echoEffect.effect(samples);
+	effectsMusic.loadSamples(samples, music.fs);
+}
+
+void but_echo_force_set_cb(Fl_Widget *w, void* v)
+{
+	std::cout << std::endl << "Button echo force set callback!" << std::endl;
+	echoEffect.setParamFloat1((((Fl_Value_Slider*)v)->value())/100); // podzielic przez 100 % !
+}
+
+void but_echo_delay_set_cb(Fl_Widget *w, void* v)
+{
+	std::cout << std::endl << "Button echo delay set callback!" << std::endl;
+	echoEffect.setParamInt1((((Fl_Value_Slider*)v)->value()*(music.fs/1000))); 
 }
 
 
@@ -172,6 +201,12 @@ int main()
 	but_changeSound.color2(156);
 	but_changeSound.color(156);
 
+	Fl_Button but_resetEffects(130, 130, 90, 30, "Reset Effects");
+	but_resetEffects.shortcut('r');
+	but_resetEffects.callback(but_resetEffects_cb);
+	but_resetEffects.color2(156);
+	but_resetEffects.color(156);
+
 
 	//Fl_Button but_saveSound(10, 170, 110, 30, "@filenew Save Sound");
 	//but_loadSound.shortcut('s');
@@ -181,6 +216,8 @@ int main()
 
 
 	// slider volume
+
+
 	Fl_Slider slider_volume(130, 50, 90, 15, "volume");
 	slider_volume.type(FL_HOR_NICE_SLIDER);
 	slider_volume.maximum(100);
@@ -189,6 +226,7 @@ int main()
 	slider_volume.callback(but_volume_set_cb, &slider_volume);
 	slider_volume.color(156);
 	slider_volume.color2(2); //GREEN
+	
 
 	Fl_Button but_speedMinus(230, 50, 30, 30, "@<<");
 	but_speedMinus.shortcut('z');
@@ -259,21 +297,22 @@ int main()
 	slider_echo_force.type(FL_HOR_NICE_SLIDER);
 	slider_echo_force.maximum(200);
 	slider_echo_force.minimum(5);
-	slider_echo_force.scrollvalue(100, 1, 0, 200);
-	//slider_echo_force.callback(but_echo_force_set_cb, &slider_echo_force);
+	slider_echo_force.scrollvalue(100, 1, 0, 201);
+	slider_echo_force.callback(but_echo_force_set_cb, &slider_echo_force);
 	slider_echo_force.color(156);
 	slider_echo_force.color2(2); //GREEN
-
+	
 
 	// Sliders for effects
 	Fl_Value_Slider slider_echo_delay(230, 170, 140, 15, "Delay [ms]");
 	slider_echo_delay.type(FL_HOR_NICE_SLIDER);
 	slider_echo_delay.maximum(5000);
 	slider_echo_delay.minimum(10);
-	slider_echo_delay.scrollvalue(100, 10, 0, 5000);
-	//slider_echo_delay.callback(but_echo_delay_set_cb, &slider_echo_delay);
+	slider_echo_delay.scrollvalue(100, 10, 0, 1010);
+	slider_echo_delay.callback(but_echo_delay_set_cb, &slider_echo_delay);
 	slider_echo_delay.color(156);
 	slider_echo_delay.color2(2); //GREEN
+
 
 	// Distortion
 	Fl_Check_Button but_distortion(230, 230, 100, 30, "Distortion");
