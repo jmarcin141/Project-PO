@@ -3,6 +3,9 @@
 
 #include "EffectBody.h"
 #include "EchoBody.h"
+#include "DistortionBody.h"
+#include "BitCrusherBody.h"
+#include "WahWahBody.h"
 
 
 //...#include "EffectBody.h"
@@ -18,7 +21,7 @@ private:
 public:
 	enum class EffectType
 	{
-		ECHO, DISTORTION, WAHWAH, EFFECTX, RINGMODULATOR
+		ECHO, DISTORTION, BITCRUSHER, WAHWAH, EFFECTX, RINGMODULATOR
 	};
 
 	EffectHandle(EffectType type); 

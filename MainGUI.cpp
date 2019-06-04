@@ -11,6 +11,9 @@ std::vector<int> vInt(3); // vector parametrow efektow
 //2-echo delay
 
 EffectHandle echoEffect(EffectHandle::EffectType::ECHO);
+EffectHandle distortionEffect(EffectHandle::EffectType::DISTORTION);
+EffectHandle bitCrusherEffect(EffectHandle::EffectType::BITCRUSHER);
+EffectHandle wahWahEffect(EffectHandle::EffectType::WAHWAH);
 
 
 void but_loadSound_cb(Fl_Widget* w, void*v)
@@ -160,16 +163,55 @@ void but_echo_delay_set_cb(Fl_Widget *w, void* v)
 	echoEffect.setParamInt1((((Fl_Value_Slider*)v)->value()*(music.fs/1000))); 
 }
 
+void but_distortion_cb(Fl_Widget *w, void* v)
+{
+	std::cout << std::endl << "Button distortion callback!" << std::endl;
+	std::vector<sf::Int16> samples = ((Music*)v)->getSamples();
+	distortionEffect.effect(samples);
+	effectsMusic.loadSamples(samples, music.fs);
+}
+
+void but_distortion_set_cb(Fl_Widget *w, void* v)
+{
+	std::cout << std::endl << "Button distortion set callback!" << std::endl;
+	distortionEffect.setParamFloat1((((Fl_Value_Slider*)v)->value())/100);
+}
+
+void but_bitCrusher_cb(Fl_Widget *w, void* v)
+{
+	std::cout << std::endl << "Button bitCrusher callback!" << std::endl;
+	std::vector<sf::Int16> samples = ((Music*)v)->getSamples();
+	bitCrusherEffect.effect(samples);
+	effectsMusic.loadSamples(samples, music.fs);
+}
+
+void but_bitCrusher_set_cb(Fl_Widget *w, void* v)
+{
+	std::cout << std::endl << "Button bitCrusher set callback!" << std::endl;
+	bitCrusherEffect.setParamFloat1(((Fl_Value_Slider*)v)->value());
+	//distortionEffect.setParamFloat1((((Fl_Value_Slider*)v)->value()) / 100);
+}
+
+void but_wahWah_cb(Fl_Widget *w, void* v)
+{
+	std::cout << std::endl << "Button WahWah callback!" << std::endl;
+	std::vector<sf::Int16> samples = ((Music*)v)->getSamples();
+	wahWahEffect.effect(samples);
+	effectsMusic.loadSamples(samples, music.fs);
+}
+
+void but_wahWah_set_cb(Fl_Widget *w, void* v)
+{
+	std::cout << std::endl << "Button WahWah set callback!" << std::endl;
+	bitCrusherEffect.setParamFloat1(((Fl_Value_Slider*)v)->value());
+	//distortionEffect.setParamFloat1((((Fl_Value_Slider*)v)->value()) / 100);
+}
 
 int main()
 {
 	system("Color 0B");
 	std::cout << "Efekt gitarowy - projekt" << std::endl;
 
-
-	//Modulator ko³owy (Ring modulator) wprowadza efekt
-	//silnie nieharmonicznego sygna³u, poprzez wymno¿enie
-	//sygna³u przez sinus o regulowanej czêstotliwoœci
 
 
 	Fl_Window win(500, 400);
@@ -316,33 +358,48 @@ int main()
 
 	// Distortion
 	Fl_Check_Button but_distortion(230, 230, 100, 30, "Distortion");
-	//but_loop.callback(but_loop_cb);
+	but_distortion.callback(but_distortion_cb, &music);
 	but_distortion.color2(Fl_Color(58));
 	but_distortion.color(Fl_Color(157));
 
-	Fl_Value_Slider slider_distortion(230, 260, 140, 15, "Level of amplitude");
+	Fl_Value_Slider slider_distortion(230, 260, 140, 15, "Level of amplitude [%]");
 	slider_distortion.type(FL_HOR_NICE_SLIDER);
 	slider_distortion.maximum(100);
 	slider_distortion.minimum(5);
 	slider_distortion.scrollvalue(100, 10, 0, 100);
-	//slider_distortion.callback(but_volume_set_cb, &slider_distortion);
+	slider_distortion.callback(but_distortion_set_cb, &slider_distortion);
 	slider_distortion.color(156);
 	slider_distortion.color2(2); //GREEN
 
-	//Wah-Wah
-	Fl_Check_Button but_wah_wah(230, 310, 100, 30, "Wah-Wah");
-	//but_loop.callback(but_loop_cb);
-	but_wah_wah.color2(Fl_Color(58));
-	but_wah_wah.color(Fl_Color(157));
+	// Bit Crusher
+	Fl_Check_Button but_bitCrusher(230, 310, 100, 30, "Bit Crusher");
+	but_bitCrusher.callback(but_bitCrusher_cb, &music);
+	but_bitCrusher.color2(Fl_Color(58));
+	but_bitCrusher.color(Fl_Color(157));
 
-	Fl_Value_Slider slider_wah_wah(230, 340, 140, 15, "Wah-Wah");
-	slider_wah_wah.type(FL_HOR_NICE_SLIDER);
-	slider_wah_wah.maximum(100);
-	slider_wah_wah.minimum(5);
-	slider_wah_wah.scrollvalue(100, 10, 0, 100);
-	//slider_wah_wah.callback(but_volume_set_cb, &slider_wah_wah);
-	slider_wah_wah.color(156);
-	slider_wah_wah.color2(2); //GREEN
+	Fl_Value_Slider slider_bitCrusher(230, 340, 140, 15, "Level of amplitude [%]");
+	slider_bitCrusher.type(FL_HOR_NICE_SLIDER);
+	slider_bitCrusher.maximum(100);
+	slider_bitCrusher.minimum(5);
+	slider_bitCrusher.scrollvalue(100, 10, 0, 100);
+	slider_bitCrusher.callback(but_bitCrusher_set_cb, &slider_bitCrusher);
+	slider_bitCrusher.color(156);
+	slider_bitCrusher.color2(2); //GREEN
+
+	//Wah-Wah
+	Fl_Check_Button but_wahWah(10, 310, 100, 30, "Wah-Wah");
+	but_wahWah.callback(but_wahWah_cb,&music);
+	but_wahWah.color2(Fl_Color(58));
+	but_wahWah.color(Fl_Color(157));
+
+	Fl_Value_Slider slider_wahWah(10, 340, 140, 15, "Wah-Wah");
+	slider_wahWah.type(FL_HOR_NICE_SLIDER);
+	slider_wahWah.maximum(100);
+	slider_wahWah.minimum(5);
+	slider_wahWah.scrollvalue(100, 10, 0, 100);
+	slider_wahWah.callback(but_wahWah_set_cb, &slider_wahWah);
+	slider_wahWah.color(156);
+	slider_wahWah.color2(2); //GREEN
 
 
 

@@ -7,7 +7,7 @@ void EchoBody::effect(std::vector<sf::Int16> &samples)
 	// echo efekt
 	//music.loadSound();
 
-	int start = 0;
+	sf::Uint64 start = 0;
 	//int delay = 3000;
 	//int length = 500000;
 	sf::Uint64 length = samples.size();

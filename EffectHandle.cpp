@@ -9,11 +9,15 @@ EffectHandle::EffectHandle(EffectType type)
 		break;
 
 	case EffectType::DISTORTION:
-		//fBodyObj = std::make_unique <DistortionBody>();
+		fBodyObj = std::make_unique <DistortionBody>();
+		break;
+
+	case EffectType::BITCRUSHER:
+		fBodyObj = std::make_unique <BitCrusherBody>();
 		break;
 
 	case EffectType::WAHWAH:
-	//	fBodyObj = std::make_unique <WahWahBody>();
+		fBodyObj = std::make_unique <WahWahBody>();
 		break;
 
 	case EffectType::EFFECTX:
