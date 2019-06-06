@@ -1,18 +1,19 @@
 //#define _CRT_SECURE_NO_DEPRECATE // odczyt fstream , 
 
 #include "headers.h"
+//#include "GlobalVariables.h"
 
 Music music;
 Music oryginalMusic;
 Music effectsMusic;
 
-std::vector<int> vInt(3); // vector parametrow efektow
-//1-echo force
-//2-echo delay
+
 
 EffectHandle echoEffect(EffectHandle::EffectType::ECHO);
 EffectHandle distortionEffect(EffectHandle::EffectType::DISTORTION);
 EffectHandle bitCrusherEffect(EffectHandle::EffectType::BITCRUSHER);
+EffectHandle ringModulatorEffect(EffectHandle::EffectType::RINGMODULATOR);
+
 EffectHandle wahWahEffect(EffectHandle::EffectType::WAHWAH);
 
 
@@ -188,9 +189,31 @@ void but_bitCrusher_cb(Fl_Widget *w, void* v)
 void but_bitCrusher_set_cb(Fl_Widget *w, void* v)
 {
 	std::cout << std::endl << "Button bitCrusher set callback!" << std::endl;
-	bitCrusherEffect.setParamFloat1(((Fl_Value_Slider*)v)->value());
+	bitCrusherEffect.setParamInt1(((Fl_Value_Slider*)v)->value());
 	//distortionEffect.setParamFloat1((((Fl_Value_Slider*)v)->value()) / 100);
 }
+
+
+void but_ringModulator_cb(Fl_Widget *w, void* v)
+{
+	std::cout << std::endl << "Button ringModulator callback!" << std::endl;
+	std::vector<sf::Int16> samples = ((Music*)v)->getSamples();
+	ringModulatorEffect.effect(samples);
+	effectsMusic.loadSamples(samples, music.fs);
+}
+
+void but_ringModulatorForce_set_cb(Fl_Widget *w, void* v)
+{
+	std::cout << std::endl << "Button ringModulator force set callback!" << std::endl;
+	ringModulatorEffect.setParamFloat1((((Fl_Value_Slider*)v)->value()) / 100); //[%]
+}
+
+void but_ringModulatorFreq_set_cb(Fl_Widget *w, void* v)
+{
+	std::cout << std::endl << "Button ringModulator freq set callback!" << std::endl;
+	ringModulatorEffect.setParamInt1(((Fl_Value_Slider*)v)->value());
+}
+
 
 void but_wahWah_cb(Fl_Widget *w, void* v)
 {
@@ -203,7 +226,7 @@ void but_wahWah_cb(Fl_Widget *w, void* v)
 void but_wahWah_set_cb(Fl_Widget *w, void* v)
 {
 	std::cout << std::endl << "Button WahWah set callback!" << std::endl;
-	bitCrusherEffect.setParamFloat1(((Fl_Value_Slider*)v)->value());
+	wahWahEffect.setParamFloat1(((Fl_Value_Slider*)v)->value());
 	//distortionEffect.setParamFloat1((((Fl_Value_Slider*)v)->value()) / 100);
 }
 
@@ -214,7 +237,7 @@ int main()
 
 
 
-	Fl_Window win(500, 400);
+	Fl_Window win(700, 400);
 	win.color(148);
 
 	win.begin();
@@ -258,8 +281,6 @@ int main()
 
 
 	// slider volume
-
-
 	Fl_Slider slider_volume(130, 50, 90, 15, "volume");
 	slider_volume.type(FL_HOR_NICE_SLIDER);
 	slider_volume.maximum(100);
@@ -348,7 +369,7 @@ int main()
 	// Sliders for effects
 	Fl_Value_Slider slider_echo_delay(230, 170, 140, 15, "Delay [ms]");
 	slider_echo_delay.type(FL_HOR_NICE_SLIDER);
-	slider_echo_delay.maximum(5000);
+	slider_echo_delay.maximum(1000);
 	slider_echo_delay.minimum(10);
 	slider_echo_delay.scrollvalue(100, 10, 0, 1010);
 	slider_echo_delay.callback(but_echo_delay_set_cb, &slider_echo_delay);
@@ -372,19 +393,47 @@ int main()
 	slider_distortion.color2(2); //GREEN
 
 	// Bit Crusher
-	Fl_Check_Button but_bitCrusher(230, 310, 100, 30, "Bit Crusher");
+	Fl_Check_Button but_bitCrusher(230, 310, 100, 30, "Bit Crusher(reduce resolution)");
 	but_bitCrusher.callback(but_bitCrusher_cb, &music);
 	but_bitCrusher.color2(Fl_Color(58));
 	but_bitCrusher.color(Fl_Color(157));
 
-	Fl_Value_Slider slider_bitCrusher(230, 340, 140, 15, "Level of amplitude [%]");
+	Fl_Value_Slider slider_bitCrusher(230, 340, 140, 15, "Resolution [bits]");
 	slider_bitCrusher.type(FL_HOR_NICE_SLIDER);
-	slider_bitCrusher.maximum(100);
-	slider_bitCrusher.minimum(5);
-	slider_bitCrusher.scrollvalue(100, 10, 0, 100);
+	slider_bitCrusher.maximum(16);
+	slider_bitCrusher.minimum(2);
+	slider_bitCrusher.scrollvalue(16, 2, 2, 14);
 	slider_bitCrusher.callback(but_bitCrusher_set_cb, &slider_bitCrusher);
 	slider_bitCrusher.color(156);
 	slider_bitCrusher.color2(2); //GREEN
+
+
+	//Ring Modulator
+	Fl_Check_Button but_ringModulator(400, 100, 100, 30, "Ring Modulator");
+	but_ringModulator.callback(but_ringModulator_cb, &music);
+	but_ringModulator.color2(Fl_Color(58));
+	but_ringModulator.color(Fl_Color(157));
+
+
+	Fl_Value_Slider slider_ringModulator_force(400, 130, 140, 15, "Force [%]");
+	slider_ringModulator_force.type(FL_HOR_NICE_SLIDER);
+	slider_ringModulator_force.maximum(100);
+	slider_ringModulator_force.minimum(5);
+	slider_ringModulator_force.scrollvalue(100, 1, 0, 100);
+	slider_ringModulator_force.callback(but_ringModulatorForce_set_cb, &slider_ringModulator_force);
+	slider_ringModulator_force.color(156);
+	slider_ringModulator_force.color2(2); //GREEN
+
+
+	Fl_Value_Slider slider_ringModulator_freq(400, 170, 140, 15, "Frequency [Hz]");
+	slider_ringModulator_freq.type(FL_HOR_NICE_SLIDER);
+	slider_ringModulator_freq.maximum(16000);
+	slider_ringModulator_freq.minimum(20);
+	slider_ringModulator_freq.scrollvalue(500, 10, 20, 16000);
+	slider_ringModulator_freq.callback(but_ringModulatorFreq_set_cb, &slider_ringModulator_freq);
+	slider_ringModulator_freq.color(156);
+	slider_ringModulator_freq.color2(2); //GREEN
+
 
 	//Wah-Wah
 	Fl_Check_Button but_wahWah(10, 310, 100, 30, "Wah-Wah");

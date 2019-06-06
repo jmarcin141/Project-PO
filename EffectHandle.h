@@ -5,6 +5,8 @@
 #include "EchoBody.h"
 #include "DistortionBody.h"
 #include "BitCrusherBody.h"
+#include "RingModulatorBody.h"
+
 #include "WahWahBody.h"
 
 

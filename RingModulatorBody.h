@@ -7,7 +7,7 @@ class RingModulatorBody : public EffectBody
 {
 private:
 	int freq = 1000;
-	float force = 0.5f;
+	float force = 0.5f; //[%]
 
 public:
 	virtual void EffectBody::effect(std::vector<sf::Int16> &samples) override;
