@@ -16,18 +16,21 @@ EffectHandle::EffectHandle(EffectType type)
 		fBodyObj = std::make_unique <BitCrusherBody>();
 		break;
 
-	case EffectType::WAHWAH:
-		fBodyObj = std::make_unique <WahWahBody>();
-		break;
-
 	case EffectType::RINGMODULATOR:
 		fBodyObj = std::make_unique <RingModulatorBody>();
+		break;
+
+	case EffectType::REVERSE:
+		fBodyObj = std::make_unique <ReverseBody>();
+		break;
+
+	case EffectType::WAHWAH:
+		fBodyObj = std::make_unique <WahWahBody>();
 		break;
 
 	case EffectType::EFFECTX:
 		//fBodyObj = std::make_unique <effect...Body>();
 		break;
-
 
 	default:
 		break;
