@@ -3,20 +3,366 @@
 #include "headers.h"
 //#include "GlobalVariables.h"
 
+
+
+//#include <Windows.h>
+
+//#include <FL/Fl_Text_Buffer.H>
+//#include <FL/Fl_Text_Display.H>
+
+#include "buttons_callback.h"
+
+
+
 Music music;
 Music oryginalMusic;
 Music effectsMusic;
-
 
 
 EffectHandle echoEffect(EffectHandle::EffectType::ECHO);
 EffectHandle distortionEffect(EffectHandle::EffectType::DISTORTION);
 EffectHandle bitCrusherEffect(EffectHandle::EffectType::BITCRUSHER);
 EffectHandle ringModulatorEffect(EffectHandle::EffectType::RINGMODULATOR);
+EffectHandle reverseEffect(EffectHandle::EffectType::REVERSE);
 
 EffectHandle wahWahEffect(EffectHandle::EffectType::WAHWAH);
 
 
+
+void but_loadSound_cb(Fl_Widget* w, void*v);
+
+void but_saveSound_cb(Fl_Widget* w, void*v);
+
+//void but_play_cb(Fl_Widget* w, void* v);
+
+void but_pause_cb(Fl_Widget* w, void* v);
+
+void but_loop_cb(Fl_Widget* w, void* v);
+
+void but_stop_cb(Fl_Widget* w, void* v);
+
+void but_rewind_cb(Fl_Widget* w, void* v);
+
+void but_forward_cb(Fl_Widget* w, void* v);
+
+//slider
+void but_volume_set_cb(Fl_Widget *w, void *v);
+
+void but_volumePlus_cb(Fl_Widget *w, void* v);
+
+void but_volumeMinus_cb(Fl_Widget *w, void* v);
+
+void but_speedPlus_cb(Fl_Widget* w, void* v);
+
+void but_speedMinus_cb(Fl_Widget* w, void* v);
+ //########################################
+ //CLOSE WINDOW
+void but_exit_cb(Fl_Widget *w, void* v);
+
+void but_changeSound_cb(Fl_Widget *w, void* v);
+
+void but_resetEffects_cb(Fl_Widget *w, void* v);
+
+void but_echo_cb(Fl_Widget *w, void* v);
+
+void but_echo_force_set_cb(Fl_Widget *w, void* v);
+
+void but_echo_delay_set_cb(Fl_Widget *w, void* v);
+
+void but_distortion_cb(Fl_Widget *w, void* v);
+
+void but_distortion_set_cb(Fl_Widget *w, void* v);
+
+void but_bitCrusher_cb(Fl_Widget *w, void* v);
+
+void but_bitCrusher_set_cb(Fl_Widget *w, void* v);
+
+void but_ringModulator_cb(Fl_Widget *w, void* v);
+
+void but_ringModulatorForce_set_cb(Fl_Widget *w, void* v);
+
+void but_ringModulatorFreq_set_cb(Fl_Widget *w, void* v);
+
+void but_reverse_cb(Fl_Widget *w, void* v);
+
+void but_wahWah_cb(Fl_Widget *w, void* v);
+
+void but_wahWah_set_cb(Fl_Widget *w, void* v);
+
+
+
+int main()
+{
+	system("Color 0B");
+	std::cout << "Efekt gitarowy - projekt" << std::endl;
+
+
+	std::vector<std::string> files = getNameFilesFromDirectory();
+
+	char txt[1000] = {};
+	for (int i = 0, index = 0; i < files.size(); i++)
+	{
+		for (int j = 0; j < files.at(i).size(); j++)
+		{
+			txt[index++] = files.at(i).at(j);
+			if (j == files.at(i).size() - 1)
+			{
+				txt[index++] = '\n';
+			}
+		}
+	}
+
+
+	Fl_Window win(800, 480);
+	win.color(148);
+	win.begin();
+
+
+	Fl_Text_Display availableSoundsLabel(5, 25, 155, 445, "Available sounds:");
+	
+	Fl_Box availableSounds(15, 30, 0, 380, txt);
+	availableSounds.align(FL_ALIGN_RIGHT_TOP);
+	availableSounds.color2(148);
+	availableSounds.color(156);
+
+
+	Fl_Input fileName(310, 10, 100, 30, "@filenew Load Sound");
+	fileName.callback(but_loadSound_cb,&fileName);
+	fileName.color2(148);
+	fileName.color(156);
+
+	Fl_Input fileSaveName(560, 10, 100, 30, "@filenew Save Sound");
+	fileSaveName.callback(but_saveSound_cb,&fileSaveName);
+	fileSaveName.color2(148);
+	fileSaveName.color(156);
+
+
+	//Fl_Button but_loadSound(10, 10, 110, 30, "@filenew Load Sound");
+	//but_loadSound.shortcut('l');
+	//but_loadSound.callback(but_loadSound_cb);
+	//but_loadSound.color2(156);
+	//but_loadSound.color(156);
+
+
+	Fl_Button but_changeSound(340, 60, 130, 30, "Original");
+	but_changeSound.shortcut('c');
+	but_changeSound.callback(&but_changeSound_cb);
+	but_changeSound.color2(156);
+	but_changeSound.color(156);
+
+	Fl_Button but_resetEffects(340, 100, 130, 30, "Reset Effects");
+	but_resetEffects.shortcut('r');
+	but_resetEffects.callback(but_resetEffects_cb);
+	but_resetEffects.color2(156);
+	but_resetEffects.color(156);
+
+
+	//Fl_Button but_saveSound(10, 170, 110, 30, "@filenew Save Sound");
+	//but_loadSound.shortcut('s');
+	//but_saveSound.callback(but_saveSound_cb, &music);
+	//but_saveSound.color2(156);
+	//but_saveSound.color(156);
+
+
+	// slider volume
+	Fl_Slider slider_volume(490, 62, 170, 15, "volume");
+	slider_volume.type(FL_HOR_NICE_SLIDER);
+	slider_volume.maximum(100);
+	slider_volume.minimum(5);
+	slider_volume.scrollvalue(100, 10, 0, 100);
+	slider_volume.callback(but_volume_set_cb, &slider_volume);
+	slider_volume.color(156);
+	slider_volume.color2(2); //GREEN
+	
+
+	Fl_Button but_speedMinus(490, 100, 30, 30, "@<<");
+	but_speedMinus.shortcut('z');
+	but_speedMinus.callback(but_speedMinus_cb);
+	but_speedMinus.color2(Fl_Color(157));
+	but_speedMinus.color(Fl_Color(157));
+
+	Fl_Button but_speedPlus(530, 100, 30, 30, "@>>");
+	but_speedPlus.shortcut('x');
+	but_speedPlus.callback(but_speedPlus_cb);
+	but_speedPlus.color2(Fl_Color(157));
+	but_speedPlus.color(Fl_Color(157));
+
+	Fl_Button but_exit(575, 100, 85, 30, "Exit");
+	but_exit.shortcut(FL_Escape);
+	but_exit.callback(but_exit_cb, &win);
+	but_exit.color2(Fl_Color(157));
+	but_exit.color(Fl_Color(157));
+
+
+	Fl_Button but_play(250, 60, 30, 30, "@>");
+	but_play.shortcut('s');
+	but_play.callback(but_play_cb, &music);
+	but_play.color(Fl_Color(157));
+	but_play.color2(Fl_Color(157));
+
+
+
+	Fl_Button but_pause(210, 60, 30, 30, "||");
+	but_pause.shortcut('p');
+	but_pause.callback(but_pause_cb);
+	but_pause.color2(Fl_Color(157));
+	but_pause.color(Fl_Color(157));
+	
+
+	Fl_Light_Button but_loop(290, 60, 30, 30, "@refresh");
+	but_loop.shortcut('i');
+	but_loop.callback(but_loop_cb);
+	but_loop.color2(Fl_Color(171));
+	but_loop.color(Fl_Color(157));
+
+	Fl_Button but_stop(250, 100, 30, 30, "@square");
+	but_stop.shortcut('o');
+	but_stop.callback(but_stop_cb);
+	but_stop.color2(Fl_Color(157));
+	but_stop.color(Fl_Color(157));
+
+	Fl_Button but_rewind(210, 100, 30, 30, "@|<");
+	but_rewind.shortcut('a');
+	but_rewind.callback(but_rewind_cb);
+	but_rewind.color2(Fl_Color(157));
+	but_rewind.color(Fl_Color(157));
+
+	Fl_Button but_forward(290, 100, 30, 30, "@>|");
+	but_forward.shortcut('d');
+	but_forward.callback(but_forward_cb);
+	but_forward.color2(Fl_Color(157));
+	but_forward.color(Fl_Color(157));
+
+
+	// Effects Buttons
+
+	Fl_Text_Display effectsSoundLabel(210, 170, 450, 300, "Effects:");
+	Fl_Text_Display effectsSoundLabel1(435, 170, 225, 300, "");
+	Fl_Text_Display effectsSoundLabel2(210, 290, 450, 180, "");
+	Fl_Text_Display effectsSoundLabel3(210, 380, 450, 90, "");
+
+	// Reverse samples
+	Fl_Check_Button but_reverse(230, 400, 100, 30, "Reverse samples");
+	but_reverse.callback(but_reverse_cb, &effectsMusic);
+	but_reverse.color2(Fl_Color(58));
+	but_reverse.color(Fl_Color(157));
+
+
+	//Echo
+	Fl_Check_Button but_echo(230, 180, 180, 30, "Echo");
+	but_echo.callback(but_echo_cb, &effectsMusic);
+	but_echo.color2(Fl_Color(58));
+	but_echo.color(Fl_Color(157));
+
+	// Sliders for effects
+	//Echo
+	Fl_Value_Slider slider_echo_force(230, 210, 180, 15, "Force [%]");
+	slider_echo_force.type(FL_HOR_NICE_SLIDER);
+	slider_echo_force.maximum(100);
+	slider_echo_force.minimum(5);
+	slider_echo_force.scrollvalue(100, 1, 0, 101);
+	slider_echo_force.callback(but_echo_force_set_cb, &slider_echo_force);
+	slider_echo_force.color(156);
+	slider_echo_force.color2(2); //GREEN
+	
+
+	// Sliders for effects
+	Fl_Value_Slider slider_echo_delay(230, 250, 180, 15, "Delay [ms]");
+	slider_echo_delay.type(FL_HOR_NICE_SLIDER);
+	slider_echo_delay.maximum(1000);
+	slider_echo_delay.minimum(10);
+	slider_echo_delay.scrollvalue(100, 10, 0, 1010);
+	slider_echo_delay.callback(but_echo_delay_set_cb, &slider_echo_delay);
+	slider_echo_delay.color(156);
+	slider_echo_delay.color2(2); //GREEN
+
+
+	// Distortion
+	Fl_Check_Button but_distortion(230, 310, 180, 30, "Distortion");
+	but_distortion.callback(but_distortion_cb, &effectsMusic);
+	but_distortion.color2(Fl_Color(58));
+	but_distortion.color(Fl_Color(157));
+
+	Fl_Value_Slider slider_distortion(230, 340, 180, 15, "Level of amplitude [%]");
+	slider_distortion.type(FL_HOR_NICE_SLIDER);
+	slider_distortion.maximum(100);
+	slider_distortion.minimum(5);
+	slider_distortion.scrollvalue(100, 10, 0, 100);
+	slider_distortion.callback(but_distortion_set_cb, &slider_distortion);
+	slider_distortion.color(156);
+	slider_distortion.color2(2); //GREEN
+
+	// Bit Crusher
+	Fl_Check_Button but_bitCrusher(460, 310, 180, 30, "Bit Crusher(low resolution)");
+	but_bitCrusher.callback(but_bitCrusher_cb, &effectsMusic);
+	but_bitCrusher.color2(Fl_Color(58));
+	but_bitCrusher.color(Fl_Color(157));
+
+	Fl_Value_Slider slider_bitCrusher(460, 340, 180, 15, "Resolution [bits]");
+	slider_bitCrusher.type(FL_HOR_NICE_SLIDER);
+	slider_bitCrusher.maximum(16);
+	slider_bitCrusher.minimum(2);
+	slider_bitCrusher.scrollvalue(16, 2, 2, 14);
+	slider_bitCrusher.callback(but_bitCrusher_set_cb, &slider_bitCrusher);
+	slider_bitCrusher.color(156);
+	slider_bitCrusher.color2(2); //GREEN
+
+
+	//Ring Modulator
+	Fl_Check_Button but_ringModulator(460, 180, 180, 30, "Ring Modulator");
+	but_ringModulator.callback(but_ringModulator_cb, &effectsMusic);
+	but_ringModulator.color2(Fl_Color(58));
+	but_ringModulator.color(Fl_Color(157));
+
+
+	Fl_Value_Slider slider_ringModulator_force(460, 210, 180, 15, "Force [%]");
+	slider_ringModulator_force.type(FL_HOR_NICE_SLIDER);
+	slider_ringModulator_force.maximum(100);
+	slider_ringModulator_force.minimum(5);
+	slider_ringModulator_force.scrollvalue(100, 1, 0, 100);
+	slider_ringModulator_force.callback(but_ringModulatorForce_set_cb, &slider_ringModulator_force);
+	slider_ringModulator_force.color(156);
+	slider_ringModulator_force.color2(2); //GREEN
+
+
+	Fl_Value_Slider slider_ringModulator_freq(460, 250, 180, 15, "Frequency [Hz]");
+	slider_ringModulator_freq.type(FL_HOR_NICE_SLIDER);
+	slider_ringModulator_freq.maximum(10000);
+	slider_ringModulator_freq.minimum(20);
+	slider_ringModulator_freq.scrollvalue(500, 10, 20, 1000);
+	slider_ringModulator_freq.callback(but_ringModulatorFreq_set_cb, &slider_ringModulator_freq);
+	slider_ringModulator_freq.color(156);
+	slider_ringModulator_freq.color2(2); //GREEN
+
+
+	//Wah-Wah
+	Fl_Check_Button but_wahWah(460, 390, 180, 30, "Wah-Wah");
+	but_wahWah.callback(but_wahWah_cb, &effectsMusic);
+	but_wahWah.color2(Fl_Color(58));
+	but_wahWah.color(Fl_Color(157));
+
+	Fl_Value_Slider slider_wahWah(460, 420, 180, 15, "Wah-Wah");
+	slider_wahWah.type(FL_HOR_NICE_SLIDER);
+	slider_wahWah.maximum(100);
+	slider_wahWah.minimum(5);
+	slider_wahWah.scrollvalue(100, 10, 0, 100);
+	slider_wahWah.callback(but_wahWah_set_cb, &slider_wahWah);
+	slider_wahWah.color(156);
+	slider_wahWah.color2(2); //GREEN
+
+
+
+	win.end();
+	win.show();
+	return(Fl::run());
+}
+
+
+
+
+
+
+//definitions of functions 
 void but_loadSound_cb(Fl_Widget* w, void*v)
 {
 	std::string name = ((Fl_Input*)v)->value();
@@ -39,11 +385,12 @@ void but_saveSound_cb(Fl_Widget* w, void*v)
 	std::cout << std::endl << "Button saveSound callback!" << std::endl;
 }
 
-void but_play_cb(Fl_Widget* w, void* v)
-{
-	music.playSoud();
-	std::cout << std::endl << "Button play callback!" << std::endl;
-}
+//void but_play_cb(Fl_Widget* w, void* v)
+//{
+//	std::cout << std::endl << "Button play/stop callback!" << std::endl;
+//	//music.playSoud();
+//	((Music*)v)->playSoud();
+//}
 
 void but_pause_cb(Fl_Widget* w, void* v)
 {
@@ -106,8 +453,8 @@ void but_speedMinus_cb(Fl_Widget* w, void* v)
 	std::cout << std::endl << "Button slow callback!" << std::endl;
 }
 
- //########################################
- //CLOSE WINDOW
+//########################################
+//CLOSE WINDOW
 void but_exit_cb(Fl_Widget *w, void* v)
 {
 	if (fl_ask("Do you want to exit?"))
@@ -128,7 +475,7 @@ void but_changeSound_cb(Fl_Widget *w, void* v)
 		std::cout << std::endl << "w->label() == Original" << std::endl;
 	}
 	else
-	{ 
+	{
 		w->label("Original");
 		std::cout << std::endl << " w->label() == After effects " << std::endl;
 		music = oryginalMusic;
@@ -155,13 +502,13 @@ void but_echo_cb(Fl_Widget *w, void* v)
 void but_echo_force_set_cb(Fl_Widget *w, void* v)
 {
 	std::cout << std::endl << "Button echo force set callback!" << std::endl;
-	echoEffect.setParamFloat1((((Fl_Value_Slider*)v)->value())/100); // podzielic przez 100 % !
+	echoEffect.setParamFloat1((((Fl_Value_Slider*)v)->value()) / 100); // podzielic przez 100 % !
 }
 
 void but_echo_delay_set_cb(Fl_Widget *w, void* v)
 {
 	std::cout << std::endl << "Button echo delay set callback!" << std::endl;
-	echoEffect.setParamInt1((((Fl_Value_Slider*)v)->value()*(music.fs/1000))); 
+	echoEffect.setParamInt1((((Fl_Value_Slider*)v)->value()*(music.fs / 1000)));
 }
 
 void but_distortion_cb(Fl_Widget *w, void* v)
@@ -175,7 +522,7 @@ void but_distortion_cb(Fl_Widget *w, void* v)
 void but_distortion_set_cb(Fl_Widget *w, void* v)
 {
 	std::cout << std::endl << "Button distortion set callback!" << std::endl;
-	distortionEffect.setParamFloat1((((Fl_Value_Slider*)v)->value())/100);
+	distortionEffect.setParamFloat1((((Fl_Value_Slider*)v)->value()) / 100);
 }
 
 void but_bitCrusher_cb(Fl_Widget *w, void* v)
@@ -190,7 +537,6 @@ void but_bitCrusher_set_cb(Fl_Widget *w, void* v)
 {
 	std::cout << std::endl << "Button bitCrusher set callback!" << std::endl;
 	bitCrusherEffect.setParamInt1(((Fl_Value_Slider*)v)->value());
-	//distortionEffect.setParamFloat1((((Fl_Value_Slider*)v)->value()) / 100);
 }
 
 
@@ -215,6 +561,15 @@ void but_ringModulatorFreq_set_cb(Fl_Widget *w, void* v)
 }
 
 
+void but_reverse_cb(Fl_Widget *w, void* v)
+{
+	std::cout << std::endl << "Button Reverse callback!" << std::endl;
+	std::vector<sf::Int16> samples = ((Music*)v)->getSamples();
+	reverseEffect.effect(samples);
+	effectsMusic.loadSamples(samples, music.fs);
+}
+
+
 void but_wahWah_cb(Fl_Widget *w, void* v)
 {
 	std::cout << std::endl << "Button WahWah callback!" << std::endl;
@@ -227,238 +582,26 @@ void but_wahWah_set_cb(Fl_Widget *w, void* v)
 {
 	std::cout << std::endl << "Button WahWah set callback!" << std::endl;
 	wahWahEffect.setParamFloat1(((Fl_Value_Slider*)v)->value());
-	//distortionEffect.setParamFloat1((((Fl_Value_Slider*)v)->value()) / 100);
 }
 
-int main()
-{
-	system("Color 0B");
-	std::cout << "Efekt gitarowy - projekt" << std::endl;
-
-
-
-	Fl_Window win(700, 400);
-	win.color(148);
-
-	win.begin();
-
-	Fl_Input fileName(110, 10, 100, 30, "@filenew Load Sound");
-	fileName.callback(but_loadSound_cb,&fileName);
-	fileName.color2(148);
-	fileName.color(156);
-
-	Fl_Input fileSaveName(350, 10, 100, 30, "@filenew Save Sound");
-	fileSaveName.callback(but_saveSound_cb,&fileSaveName);
-	fileSaveName.color2(148);
-	fileSaveName.color(156);
-
-
-	//Fl_Button but_loadSound(10, 10, 110, 30, "@filenew Load Sound");
-	//but_loadSound.shortcut('l');
-	//but_loadSound.callback(but_loadSound_cb);
-	//but_loadSound.color2(156);
-	//but_loadSound.color(156);
-
-
-	Fl_Button but_changeSound(130, 90, 90, 30, "Original");
-	but_changeSound.shortcut('c');
-	but_changeSound.callback(&but_changeSound_cb);
-	but_changeSound.color2(156);
-	but_changeSound.color(156);
-
-	Fl_Button but_resetEffects(130, 130, 90, 30, "Reset Effects");
-	but_resetEffects.shortcut('r');
-	but_resetEffects.callback(but_resetEffects_cb);
-	but_resetEffects.color2(156);
-	but_resetEffects.color(156);
-
-
-	//Fl_Button but_saveSound(10, 170, 110, 30, "@filenew Save Sound");
-	//but_loadSound.shortcut('s');
-	//but_saveSound.callback(but_saveSound_cb, &music);
-	//but_saveSound.color2(156);
-	//but_saveSound.color(156);
-
-
-	// slider volume
-	Fl_Slider slider_volume(130, 50, 90, 15, "volume");
-	slider_volume.type(FL_HOR_NICE_SLIDER);
-	slider_volume.maximum(100);
-	slider_volume.minimum(5);
-	slider_volume.scrollvalue(100, 10, 0, 100);
-	slider_volume.callback(but_volume_set_cb, &slider_volume);
-	slider_volume.color(156);
-	slider_volume.color2(2); //GREEN
-	
-
-	Fl_Button but_speedMinus(230, 50, 30, 30, "@<<");
-	but_speedMinus.shortcut('z');
-	but_speedMinus.callback(but_speedMinus_cb);
-	but_speedMinus.color2(Fl_Color(157));
-	but_speedMinus.color(Fl_Color(157));
-
-	Fl_Button but_speedPlus(275, 50, 30, 30, "@>>");
-	but_speedPlus.shortcut('x');
-	but_speedPlus.callback(but_speedPlus_cb);
-	but_speedPlus.color2(Fl_Color(157));
-	but_speedPlus.color(Fl_Color(157));
-
-	Fl_Button but_exit(320, 50, 50, 30, "Exit");
-	but_exit.shortcut(FL_Escape);
-	but_exit.callback(but_exit_cb, &win);
-	but_exit.color2(Fl_Color(157));
-	but_exit.color(Fl_Color(157));
-
-
-	Fl_Button but_play(50, 90, 30, 30, "@>");
-	but_play.shortcut('s');
-	but_play.callback(but_play_cb);
-	but_play.color(Fl_Color(157));
-	but_play.color2(Fl_Color(157));
-
-	Fl_Button but_pause(10, 90, 30, 30, "||");
-	but_pause.shortcut('p');
-	but_pause.callback(but_pause_cb);
-	but_pause.color2(Fl_Color(157));
-	but_pause.color(Fl_Color(157));
-
-	Fl_Light_Button but_loop(90, 90, 30, 30, "@refresh");
-	but_loop.shortcut('i');
-	but_loop.callback(but_loop_cb);
-	but_loop.color2(Fl_Color(171));
-	but_loop.color(Fl_Color(157));
-
-	Fl_Button but_stop(50, 130, 30, 30, "@square");
-	but_stop.shortcut('o');
-	but_stop.callback(but_stop_cb);
-	but_stop.color2(Fl_Color(157));
-	but_stop.color(Fl_Color(157));
-
-	Fl_Button but_rewind(10, 130, 30, 30, "@|<");
-	but_rewind.shortcut('a');
-	but_rewind.callback(but_rewind_cb);
-	but_rewind.color2(Fl_Color(157));
-	but_rewind.color(Fl_Color(157));
-
-	Fl_Button but_forward(90, 130, 30, 30, "@>|");
-	but_forward.shortcut('d');
-	but_forward.callback(but_forward_cb);
-	but_forward.color2(Fl_Color(157));
-	but_forward.color(Fl_Color(157));
-
-
-	// Effects Buttons
-
-	Fl_Check_Button but_echo(230, 100, 100, 30, "Echo");
-	but_echo.callback(but_echo_cb, &music);
-	but_echo.color2(Fl_Color(58));
-	but_echo.color(Fl_Color(157));
-
-	// Sliders for effects
-	//Echo
-	Fl_Value_Slider slider_echo_force(230, 130, 140, 15, "Force [%]");
-	slider_echo_force.type(FL_HOR_NICE_SLIDER);
-	slider_echo_force.maximum(200);
-	slider_echo_force.minimum(5);
-	slider_echo_force.scrollvalue(100, 1, 0, 201);
-	slider_echo_force.callback(but_echo_force_set_cb, &slider_echo_force);
-	slider_echo_force.color(156);
-	slider_echo_force.color2(2); //GREEN
-	
-
-	// Sliders for effects
-	Fl_Value_Slider slider_echo_delay(230, 170, 140, 15, "Delay [ms]");
-	slider_echo_delay.type(FL_HOR_NICE_SLIDER);
-	slider_echo_delay.maximum(1000);
-	slider_echo_delay.minimum(10);
-	slider_echo_delay.scrollvalue(100, 10, 0, 1010);
-	slider_echo_delay.callback(but_echo_delay_set_cb, &slider_echo_delay);
-	slider_echo_delay.color(156);
-	slider_echo_delay.color2(2); //GREEN
-
-
-	// Distortion
-	Fl_Check_Button but_distortion(230, 230, 100, 30, "Distortion");
-	but_distortion.callback(but_distortion_cb, &music);
-	but_distortion.color2(Fl_Color(58));
-	but_distortion.color(Fl_Color(157));
-
-	Fl_Value_Slider slider_distortion(230, 260, 140, 15, "Level of amplitude [%]");
-	slider_distortion.type(FL_HOR_NICE_SLIDER);
-	slider_distortion.maximum(100);
-	slider_distortion.minimum(5);
-	slider_distortion.scrollvalue(100, 10, 0, 100);
-	slider_distortion.callback(but_distortion_set_cb, &slider_distortion);
-	slider_distortion.color(156);
-	slider_distortion.color2(2); //GREEN
-
-	// Bit Crusher
-	Fl_Check_Button but_bitCrusher(230, 310, 100, 30, "Bit Crusher(reduce resolution)");
-	but_bitCrusher.callback(but_bitCrusher_cb, &music);
-	but_bitCrusher.color2(Fl_Color(58));
-	but_bitCrusher.color(Fl_Color(157));
-
-	Fl_Value_Slider slider_bitCrusher(230, 340, 140, 15, "Resolution [bits]");
-	slider_bitCrusher.type(FL_HOR_NICE_SLIDER);
-	slider_bitCrusher.maximum(16);
-	slider_bitCrusher.minimum(2);
-	slider_bitCrusher.scrollvalue(16, 2, 2, 14);
-	slider_bitCrusher.callback(but_bitCrusher_set_cb, &slider_bitCrusher);
-	slider_bitCrusher.color(156);
-	slider_bitCrusher.color2(2); //GREEN
-
-
-	//Ring Modulator
-	Fl_Check_Button but_ringModulator(400, 100, 100, 30, "Ring Modulator");
-	but_ringModulator.callback(but_ringModulator_cb, &music);
-	but_ringModulator.color2(Fl_Color(58));
-	but_ringModulator.color(Fl_Color(157));
-
-
-	Fl_Value_Slider slider_ringModulator_force(400, 130, 140, 15, "Force [%]");
-	slider_ringModulator_force.type(FL_HOR_NICE_SLIDER);
-	slider_ringModulator_force.maximum(100);
-	slider_ringModulator_force.minimum(5);
-	slider_ringModulator_force.scrollvalue(100, 1, 0, 100);
-	slider_ringModulator_force.callback(but_ringModulatorForce_set_cb, &slider_ringModulator_force);
-	slider_ringModulator_force.color(156);
-	slider_ringModulator_force.color2(2); //GREEN
-
-
-	Fl_Value_Slider slider_ringModulator_freq(400, 170, 140, 15, "Frequency [Hz]");
-	slider_ringModulator_freq.type(FL_HOR_NICE_SLIDER);
-	slider_ringModulator_freq.maximum(16000);
-	slider_ringModulator_freq.minimum(20);
-	slider_ringModulator_freq.scrollvalue(500, 10, 20, 16000);
-	slider_ringModulator_freq.callback(but_ringModulatorFreq_set_cb, &slider_ringModulator_freq);
-	slider_ringModulator_freq.color(156);
-	slider_ringModulator_freq.color2(2); //GREEN
-
-
-	//Wah-Wah
-	Fl_Check_Button but_wahWah(10, 310, 100, 30, "Wah-Wah");
-	but_wahWah.callback(but_wahWah_cb,&music);
-	but_wahWah.color2(Fl_Color(58));
-	but_wahWah.color(Fl_Color(157));
-
-	Fl_Value_Slider slider_wahWah(10, 340, 140, 15, "Wah-Wah");
-	slider_wahWah.type(FL_HOR_NICE_SLIDER);
-	slider_wahWah.maximum(100);
-	slider_wahWah.minimum(5);
-	slider_wahWah.scrollvalue(100, 10, 0, 100);
-	slider_wahWah.callback(but_wahWah_set_cb, &slider_wahWah);
-	slider_wahWah.color(156);
-	slider_wahWah.color2(2); //GREEN
-
-
-
-	win.end();
-	win.show();
-	return(Fl::run());
-
-	//system("Pause");
-	//return 0;
-}
+//std::vector<std::string> getNameFilesFromDirectory()
+//{
+//	std::vector<std::string> files;
+//	std::string path = "E:/AGH/Semestr 4/PO/Projekty/Projekt-Efekt-Gitarowy/Projekt-Efekt-Gitarowy/My Music";
+//	for (const auto & entry : std::experimental::filesystem::directory_iterator(path))
+//	{
+//		std::cout << entry.path() << std::endl;
+//		files.push_back(entry.path().string());
+//	}
+//
+//	for (int i = 0; i < files.size(); i++)
+//	{
+//		files.at(i).erase(0, path.size() + 1);
+//		std::cout << files.at(i) << std::endl;
+//	}
+//
+//	return files;
+//}
 
 
 
