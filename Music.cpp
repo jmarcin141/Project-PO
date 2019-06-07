@@ -42,6 +42,12 @@ void Music::saveSound(std::string soundName)
 		return buf.getSampleCount();
 	};
 
+	int Music::getLengthTime()
+	{
+		return buf.getSampleCount() * fs;
+	}
+
+
 	std::vector<sf::Int16> Music::getSamples()
 	{
 		//############## modyfikacja sampli w pliku *wav ##################

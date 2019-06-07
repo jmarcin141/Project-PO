@@ -9,11 +9,14 @@
 //	std::cout << std::endl << "Button loadSound callback!" << std::endl;
 //}
 //
-//void but_play_cb(Fl_Widget* w, void* v)
-//{
-//	((Music*)v)->playSoud();
-//	std::cout << std::endl << "Button play callback!" << std::endl;
-//}
+void but_play_cb(Fl_Widget* w, void* v)
+{
+	std::cout << std::endl << "Button play/stop callback!" << std::endl;
+	//music.playSoud();
+	((Music*)v)->playSoud();
+}
+
+
 //
 //void but_pause_cb(Fl_Widget* w, void* v)
 //{

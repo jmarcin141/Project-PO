@@ -1,6 +1,6 @@
-//#pragma once
+#pragma once
 //
-//#include "headers.h"
+#include "headers.h"
 //
 //
 ////#include "GlobalVariables.h"
@@ -8,7 +8,11 @@
 //
 //void but_loadSound_cb(Fl_Widget* w, void*v);
 //
-//void but_play_cb(Fl_Widget* w, void* v);
+void but_play_cb(Fl_Widget* w, void* v);
+
+
+
+
 //
 //void but_pause_cb(Fl_Widget* w, void* v);
 //

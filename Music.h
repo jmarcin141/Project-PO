@@ -20,6 +20,8 @@ public:
 	int fs = 44100;
 	sf::Uint64 getLength();
 
+	int getLengthTime();
+
 	void setFileName(std::string mFileName);
 
 	void saveSound(std::string soundName);
