@@ -36,6 +36,16 @@ void Music::saveSound(std::string soundName)
 	};
 
 
+	void Music::setFs(int mFs)
+	{
+		fs = mFs;
+	}
+
+	int Music::getFs()
+	{
+		return fs;
+	}
+
 
 	sf::Uint64 Music::getLength()
 	{

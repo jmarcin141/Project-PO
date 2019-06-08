@@ -6,7 +6,7 @@
 class EchoBody : public EffectBody
 {
 private:
-	int delay = 1000;
+	int delay = 300;
 	float echoForce = 0.5f;
 
 public:

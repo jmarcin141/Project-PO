@@ -6,7 +6,8 @@
 class BitCrusherBody : public EffectBody
 {
 private:
-	sf::Int16 levelAmplitude = 64;
+	sf::Int16 resolution = 1;
+	int Freqs = 44100;
 
 public:
 	virtual void EffectBody::effect(std::vector<sf::Int16> &samples) override;

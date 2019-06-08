@@ -6,7 +6,7 @@
 class DistortionBody : public EffectBody
 {
 private:
-	sf::Int16 levelAmplitude = 10000;
+	sf::Int16 levelAmplitude = 32767 * 0.5f;
 
 public:
 	virtual void EffectBody::effect(std::vector<sf::Int16> &samples) override;

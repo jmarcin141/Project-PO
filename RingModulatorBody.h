@@ -6,7 +6,7 @@
 class RingModulatorBody : public EffectBody
 {
 private:
-	int freq = 1000;
+	int freq = 500;
 	float force = 0.5f; //[%]
 
 public:

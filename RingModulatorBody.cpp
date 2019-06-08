@@ -13,7 +13,7 @@ void RingModulatorBody::effect(std::vector<sf::Int16> &samples)
 	int fs = 44100;
 	for (int i = 0; i < samples.size(); i++)
 	{
-		samples.at(i) = samples.at(i) * ((1 - force) + (force * (sin(2 * M_PI * i * freq/fs))));
+		samples.at(i) = samples.at(i) * ((1 - force) + (force * (sin(2 * M_PI * i * freq/fs)))); //freq/fs
 	}
 }
 

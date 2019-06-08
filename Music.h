@@ -12,21 +12,28 @@ private:
 	std::vector<sf::Int16> samples;
 	
 	std::string fileName;
+	int fs = 44100;
 
 public:
 	Music();
 	~Music();
 
-	int fs = 44100;
+	//int fs = 44100;
+
 	sf::Uint64 getLength();
 
 	int getLengthTime();
+
+	int getFs();
+
 
 	void setFileName(std::string mFileName);
 
 	void saveSound(std::string soundName);
 
 	std::vector<sf::Int16> getSamples();
+
+	void setFs(int mFs);
 
 	void setSpeed(float speed);
 
