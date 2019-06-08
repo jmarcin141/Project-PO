@@ -24,8 +24,8 @@ EffectHandle::EffectHandle(EffectType type)
 		fBodyObj = std::make_unique <ReverseBody>();
 		break;
 
-	case EffectType::WAHWAH:
-		fBodyObj = std::make_unique <WahWahBody>();
+	case EffectType::TREMOLO:
+		fBodyObj = std::make_unique <TremoloBody>();
 		break;
 
 	case EffectType::EFFECTX:
