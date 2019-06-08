@@ -20,17 +20,18 @@ void Music::saveSound(std::string soundName)
 	else { std::cout << "Cannot save empty name .wav!" << std::endl; }
 }
 
-	void Music::loadSound()
+	bool Music::loadSound()
 	{
 		if (!buf.loadFromFile("E:\\AGH\\Semestr 4\\PO\\Projekty\\Projekt-Efekt-Gitarowy\\Projekt-Efekt-Gitarowy\\My Music\\" + fileName + ".wav"))
 		{
 			std::cout << "not loaded" << std::endl;
-			//return -1;
+			return false;
 		}
 		else 
 		{ 
 			std::cout << "loaded" << std::endl;
 			sound.setBuffer(buf);
+			return true;
 		}
 		
 	};
@@ -177,10 +178,11 @@ void Music::saveSound(std::string soundName)
 		return sound.getPlayingOffset();
 	};
 
-	void Music::loadSamples(std::vector<sf::Int16> &samples, int f)
+	bool Music::loadSamples(std::vector<sf::Int16> &samples, int f)
 	{
 		buf.loadFromSamples(&samples[0], samples.size(), 1, f);
 		sound.setBuffer(buf);
+		return true;
 	};
 
 

@@ -4,7 +4,7 @@
 //#include "GlobalVariables.h"
 
 #include "buttons_callback.h"
-
+#include "deactivateAllWidgetsInVectorOfPointers.h"
 
 
 Music music;
@@ -21,6 +21,8 @@ EffectHandle tremoloEffect(EffectHandle::EffectType::TREMOLO);
 
 
 
+bool loadedFiles = false;
+
 
 //########################################
 //BUTTONS 
@@ -36,6 +38,7 @@ void but_forward_cb(Fl_Widget* w, void* v);
 void but_changeSound_cb(Fl_Widget *w, void* v);
 
 
+
 //########################################
 //CLOSE WINDOW
 void but_exit_cb(Fl_Widget *w, void* v);
@@ -44,8 +47,6 @@ void but_exit_cb(Fl_Widget *w, void* v);
 //########################################
 //SLIDERS
 void but_volume_set_cb(Fl_Widget *w, void *v);
-void but_volumePlus_cb(Fl_Widget *w, void* v);
-void but_volumeMinus_cb(Fl_Widget *w, void* v);
 void but_speedPlus_cb(Fl_Widget* w, void* v);
 void but_speedMinus_cb(Fl_Widget* w, void* v);
 
@@ -68,11 +69,14 @@ void but_tremolo_cb(Fl_Widget *w, void* v);
 void but_tremolo_set_cb(Fl_Widget *w, void* v);
 
 
+
 //########################################
 //GUI
-int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic);
+int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic, bool openedFiles);
 
-
+//check opened files
+std::vector <Fl_Widget*> widgetsPtr;
+//void deactivateAllWidgetsInVectorOfPointers(bool openedFiles, std::vector<Fl_Widget*> vectorOfPtr);
 
 
 
@@ -82,7 +86,9 @@ int main()
 	system("Color 0B");
 	std::cout << "Efekt gitarowy - projekt" << std::endl;
 
-	int ret = initGUI(music, oryginalMusic, effectsMusic);
+	int ret = initGUI(music, oryginalMusic, effectsMusic, loadedFiles);
+
+		
 
 
 return ret;
@@ -93,20 +99,22 @@ return ret;
 
 //########################################
 //DEFINITIONS OF FUNCTIONS
-int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic)
+int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic, bool openedFiles)
 {
 	Fl_Window win(800, 480);
 	win.color(148);
 	win.begin();
 
+	
 
 	Fl_Text_Display availableSoundsLabel(5, 25, 165, 445, "Available sounds:");
 
-	Fl_Text_Display effectsSoundLabel(210, 170, 450, 300, "Effects:");
+
 	Fl_Text_Display effectsSoundLabel1(433, 170, 227, 300, ""); // vertical
 	Fl_Text_Display effectsSoundLabel2(210, 290, 450, 180, ""); //horizontal up
 	Fl_Text_Display effectsSoundLabel3(210, 380, 450, 90, ""); //horizontal down
 
+	Fl_Text_Display effectsSoundLabel(210, 170, 450, 300, "Effects:");
 
 
 	std::vector<std::string> files = getNameFilesFromDirectory();
@@ -130,23 +138,30 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic)
 	availableSounds.color(156);
 
 
-	Fl_Input fileName(310, 10, 100, 30, "@filenew Load Sound");
+	Fl_Input fileName(310, 10, 100, 30, "@fileopen Load Sound");
 	fileName.callback(but_loadSound_cb, &fileName);
 	fileName.color2(148);
 	fileName.color(156);
 
-	Fl_Input fileSaveName(560, 10, 100, 30, "@filenew Save Sound");
+	Fl_Input fileSaveName(560, 10, 100, 30, "@filesave Save Sound");
 	fileSaveName.callback(but_saveSound_cb, &fileSaveName);
 	fileSaveName.color2(148);
 	fileSaveName.color(156);
 
+	Fl_Button but_loadSoundAccept(410, 10, 30, 30, "@search");
+	but_loadSoundAccept.shortcut(FL_Enter);
+	but_loadSoundAccept.color2(156);
+	but_loadSoundAccept.color(156);
+
+
 
 
 	Fl_Button but_changeSound(340, 60, 130, 30, "Original");
-	but_changeSound.shortcut('c');
+	but_changeSound.shortcut(FL_Caps_Lock);
 	but_changeSound.callback(&but_changeSound_cb);
 	but_changeSound.color2(156);
 	but_changeSound.color(156);
+
 
 	Fl_Button but_resetEffects(340, 100, 130, 30, "Reset Effects");
 	but_resetEffects.shortcut('r');
@@ -167,13 +182,13 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic)
 
 
 	Fl_Button but_speedMinus(490, 100, 30, 30, "@<<");
-	but_speedMinus.shortcut('z');
+	but_speedMinus.shortcut(FL_F + 9);
 	but_speedMinus.callback(but_speedMinus_cb, &mMusic);
 	but_speedMinus.color2(Fl_Color(157));
 	but_speedMinus.color(Fl_Color(157));
 
 	Fl_Button but_speedPlus(530, 100, 30, 30, "@>>");
-	but_speedPlus.shortcut('x');
+	but_speedPlus.shortcut(FL_F + 11);
 	but_speedPlus.callback(but_speedPlus_cb, &mMusic);
 	but_speedPlus.color2(Fl_Color(157));
 	but_speedPlus.color(Fl_Color(157));
@@ -186,7 +201,7 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic)
 
 
 	Fl_Button but_play(250, 60, 30, 30, "@>");
-	but_play.shortcut('s');
+	but_play.shortcut('/');
 	but_play.callback(but_play_cb, &mMusic);
 	but_play.color(Fl_Color(157));
 	but_play.color2(Fl_Color(157));
@@ -194,7 +209,7 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic)
 
 
 	Fl_Button but_pause(210, 60, 30, 30, "||");
-	but_pause.shortcut('p');
+	but_pause.shortcut(FL_Pause);
 	but_pause.callback(but_pause_cb, &mMusic);
 	but_pause.color2(Fl_Color(157));
 	but_pause.color(Fl_Color(157));
@@ -207,7 +222,7 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic)
 	but_loop.color(Fl_Color(157));
 
 	Fl_Button but_stop(250, 100, 30, 30, "@square");
-	but_stop.shortcut('o');
+	but_stop.shortcut(FL_F + 10);
 	but_stop.callback(but_stop_cb, &mMusic);
 	but_stop.color2(Fl_Color(157));
 	but_stop.color(Fl_Color(157));
@@ -228,10 +243,11 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic)
 	// Effects Buttons
 
 	// Reverse samples
-	Fl_Check_Button but_reverse(230, 400, 100, 30, "Reverse samples");
+	Fl_Check_Button but_reverse(230, 400, 180, 30, "Reverse samples");
 	but_reverse.callback(but_reverse_cb, &mEffectsMusic);
 	but_reverse.color2(Fl_Color(58));
 	but_reverse.color(Fl_Color(157));
+	but_reverse.type(FL_NORMAL_BUTTON);
 
 
 	//Echo
@@ -239,6 +255,7 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic)
 	but_echo.callback(but_echo_cb, &mEffectsMusic);
 	but_echo.color2(Fl_Color(58));
 	but_echo.color(Fl_Color(157));
+	but_echo.type(FL_NORMAL_BUTTON);
 
 	// Sliders for effects
 	//Echo
@@ -268,6 +285,7 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic)
 	but_distortion.callback(but_distortion_cb, &mEffectsMusic);
 	but_distortion.color2(Fl_Color(58));
 	but_distortion.color(Fl_Color(157));
+	but_distortion.type(FL_NORMAL_BUTTON);
 
 	Fl_Value_Slider slider_distortion(230, 340, 180, 15, "Level of amplitude [%]");
 	slider_distortion.type(FL_HOR_NICE_SLIDER);
@@ -283,6 +301,7 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic)
 	but_bitCrusher.callback(but_bitCrusher_cb, &mEffectsMusic);
 	but_bitCrusher.color2(Fl_Color(58));
 	but_bitCrusher.color(Fl_Color(157));
+	but_bitCrusher.type(FL_NORMAL_BUTTON);
 
 	Fl_Value_Slider slider_bitCrusher(460, 340, 180, 15, "Reduce resolution by");
 	slider_bitCrusher.type(FL_HOR_NICE_SLIDER);
@@ -299,6 +318,7 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic)
 	but_ringModulator.callback(but_ringModulator_cb, &mEffectsMusic);
 	but_ringModulator.color2(Fl_Color(58));
 	but_ringModulator.color(Fl_Color(157));
+	but_ringModulator.type(FL_NORMAL_BUTTON);
 
 
 	Fl_Value_Slider slider_ringModulator_force(460, 210, 180, 15, "Force [%]");
@@ -326,6 +346,7 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic)
 	but_tremolo.callback(but_tremolo_cb, &mEffectsMusic);
 	but_tremolo.color2(Fl_Color(58));
 	but_tremolo.color(Fl_Color(157));
+	but_tremolo.type(FL_NORMAL_BUTTON);
 
 	Fl_Value_Slider slider_tremolo(460, 420, 180, 15, "Frequency[Hz]");
 	slider_tremolo.type(FL_HOR_NICE_SLIDER);
@@ -337,12 +358,66 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic)
 	slider_tremolo.color2(2); //GREEN
 
 
+	//std::vector <Fl_Widget*> widgetsPtr;
+	widgetsPtr.push_back(&fileSaveName);
+	widgetsPtr.push_back(&effectsSoundLabel);
+	widgetsPtr.push_back(&effectsSoundLabel1);
+	widgetsPtr.push_back(&effectsSoundLabel2);
+	widgetsPtr.push_back(&effectsSoundLabel3);
+	widgetsPtr.push_back(&but_play);
+	widgetsPtr.push_back(&but_changeSound);
+	widgetsPtr.push_back(&but_pause);
+	widgetsPtr.push_back(&but_loop);
+	widgetsPtr.push_back(&but_stop);
+	widgetsPtr.push_back(&but_rewind);
+	widgetsPtr.push_back(&but_forward);
+	widgetsPtr.push_back(&but_speedPlus);
+	widgetsPtr.push_back(&but_speedMinus);
+	widgetsPtr.push_back(&but_resetEffects);
+	widgetsPtr.push_back(&but_echo);
+	widgetsPtr.push_back(&slider_echo_delay);
+	widgetsPtr.push_back(&slider_echo_force);
+	widgetsPtr.push_back(&but_distortion);
+	widgetsPtr.push_back(&slider_distortion);
+	widgetsPtr.push_back(&but_bitCrusher);
+	widgetsPtr.push_back(&slider_bitCrusher);
+	widgetsPtr.push_back(&but_ringModulator);
+	widgetsPtr.push_back(&slider_ringModulator_force);
+	widgetsPtr.push_back(&slider_ringModulator_freq);
+	widgetsPtr.push_back(&but_reverse);
+	widgetsPtr.push_back(&but_tremolo);
+	widgetsPtr.push_back(&slider_tremolo);
+	widgetsPtr.push_back(&but_resetEffects);
+	widgetsPtr.push_back(&slider_volume);
+
+	deactivateAllWidgetsInVectorOfPointers(loadedFiles, widgetsPtr);
 
 	win.end();
 	win.show();
 	return(Fl::run());
 }
 
+
+
+
+
+//void deactivateAllWidgetsInVectorOfPointers(bool openedFiles, std::vector<Fl_Widget*> vectorOfPtr)
+//{
+//	if (openedFiles == false)
+//	{	
+//		for (int i = 0; i < vectorOfPtr.size(); i++)
+//		{
+//			vectorOfPtr.at(i)->deactivate();
+//		}
+//	}
+//	else //(openedFiles == true)
+//	{
+//		for (int i = 0; i < vectorOfPtr.size(); i++)
+//		{
+//			vectorOfPtr.at(i)->activate();
+//		}
+//	}
+//}
 
 
 
@@ -358,6 +433,9 @@ void but_loadSound_cb(Fl_Widget* w, void* v)
 	oryginalMusic.loadSound();
 	effectsMusic.loadSound();
 
+	loadedFiles = true;
+	deactivateAllWidgetsInVectorOfPointers(loadedFiles, widgetsPtr);
+
 	std::cout << std::endl << "Button loadSound callback!" << std::endl;
 }
 
@@ -365,19 +443,9 @@ void but_saveSound_cb(Fl_Widget* w, void*v)
 {
 	std::string name = ((Fl_Input*)v)->value();
 	////music.saveSound(name);
-
 	effectsMusic.saveSound(name);
 	std::cout << std::endl << "Button saveSound callback!" << std::endl;
 }
-
-//void but_play_cb(Fl_Widget* w, void* v)
-//{
-//	std::cout << std::endl << "Button play/stop callback!" << std::endl;
-//	//music.playSoud();
-//	((Music*)v)->playSoud();
-//}
-
-
 
 void but_pause_cb(Fl_Widget* w, void* v)
 {
@@ -478,10 +546,14 @@ void but_resetEffects_cb(Fl_Widget *w, void* v)
 
 void but_echo_cb(Fl_Widget *w, void* v)
 {
+
 	std::cout << std::endl << "Button echo callback!" << std::endl;
 	std::vector<sf::Int16> samples = ((Music*)v)->getSamples();
 	echoEffect.effect(samples);
-	effectsMusic.loadSamples(samples, effectsMusic.getFs());
+	if (effectsMusic.loadSamples(samples, effectsMusic.getFs()))
+	{
+		w->type(FL_NORMAL_BUTTON);
+	}
 }
 
 void but_echo_force_set_cb(Fl_Widget *w, void* v)
@@ -501,7 +573,10 @@ void but_distortion_cb(Fl_Widget *w, void* v)
 	std::cout << std::endl << "Button distortion callback!" << std::endl;
 	std::vector<sf::Int16> samples = ((Music*)v)->getSamples();
 	distortionEffect.effect(samples);
-	effectsMusic.loadSamples(samples, effectsMusic.getFs());
+	if (effectsMusic.loadSamples(samples, effectsMusic.getFs()))
+	{
+		w->type(FL_NORMAL_BUTTON);
+	}
 }
 
 void but_distortion_set_cb(Fl_Widget *w, void* v)
@@ -515,8 +590,10 @@ void but_bitCrusher_cb(Fl_Widget *w, void* v)
 	std::cout << std::endl << "Button bitCrusher callback!" << std::endl;
 	std::vector<sf::Int16> samples = ((Music*)v)->getSamples();
 	bitCrusherEffect.effect(samples);
-
-	effectsMusic.loadSamples(samples, effectsMusic.getFs());
+	if (effectsMusic.loadSamples(samples, effectsMusic.getFs()))
+	{
+		w->type(FL_NORMAL_BUTTON);
+	}
 }
 
 void but_bitCrusher_set_cb(Fl_Widget *w, void* v)
@@ -532,7 +609,10 @@ void but_ringModulator_cb(Fl_Widget *w, void* v)
 	std::cout << std::endl << "Button ringModulator callback!" << std::endl;
 	std::vector<sf::Int16> samples = ((Music*)v)->getSamples();
 	ringModulatorEffect.effect(samples);
-	effectsMusic.loadSamples(samples, effectsMusic.getFs()); // music
+	if (effectsMusic.loadSamples(samples, effectsMusic.getFs()))
+	{
+		w->type(FL_NORMAL_BUTTON);
+	}
 }
 
 void but_ringModulatorForce_set_cb(Fl_Widget *w, void* v)
@@ -553,7 +633,10 @@ void but_reverse_cb(Fl_Widget *w, void* v)
 	std::cout << std::endl << "Button Reverse callback!" << std::endl;
 	std::vector<sf::Int16> samples = ((Music*)v)->getSamples();
 	reverseEffect.effect(samples);
-	effectsMusic.loadSamples(samples, effectsMusic.getFs());
+	if (effectsMusic.loadSamples(samples, effectsMusic.getFs()))
+	{
+		w->type(FL_NORMAL_BUTTON);
+	}
 }
 
 
@@ -562,7 +645,10 @@ void but_tremolo_cb(Fl_Widget *w, void* v)
 	std::cout << std::endl << "Button tremolo callback!" << std::endl;
 	std::vector<sf::Int16> samples = ((Music*)v)->getSamples();
 	tremoloEffect.effect(samples);
-	effectsMusic.loadSamples(samples, effectsMusic.getFs());
+	if (effectsMusic.loadSamples(samples, effectsMusic.getFs()))
+	{
+		w->type(FL_NORMAL_BUTTON);
+	}
 }
 
 void but_tremolo_set_cb(Fl_Widget *w, void* v)

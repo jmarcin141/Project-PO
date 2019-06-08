@@ -39,7 +39,7 @@ public:
 
 	bool getActiveSound();
 
-	void loadSound();
+	bool loadSound();
 
 	void playSoud();
 
@@ -67,7 +67,7 @@ public:
 
 	//std::vector<sf::Int16> soundData();
 
-	void loadSamples(std::vector<sf::Int16> &samples, int f);
+	bool loadSamples(std::vector<sf::Int16> &samples, int f);
 
 };
 
