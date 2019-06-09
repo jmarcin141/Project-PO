@@ -50,14 +50,14 @@ void BitCrusherBody::effect(std::vector<sf::Int16> &samples)
 		break;
 	}
 
-	for (sf::Uint64 sample = 0; sample < length; sample++)
+	for (unsigned int sample = 0; sample < length; sample++)
 	{
-		samples.at(sample) = rint((sf::Int16)(samples.at(sample) & mask));
+		samples.at(sample) = static_cast<sf::Int16>(rint((sf::Int16)(samples.at(sample) & mask)));
 	}
 
 
 	std::vector<sf::Int16> lowerSamplings;
-	for (sf::Uint64 sample = 0; sample < length ; sample += 4 * resolution)
+	for (unsigned int sample = 0; sample < length ; sample += 4 * resolution)
 	{
 		lowerSamplings.push_back(samples.at(sample));
 	}

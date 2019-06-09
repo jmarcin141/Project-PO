@@ -2,6 +2,11 @@
 
 
 
+Music::Music(int mFs) 
+{
+	fs = mFs;
+};
+
 Music::Music() {};
 
 Music::~Music() {};

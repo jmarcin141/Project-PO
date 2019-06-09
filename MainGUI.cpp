@@ -1,81 +1,6 @@
-//#define _CRT_SECURE_NO_DEPRECATE // odczyt fstream , 
-
 #include "headers.h"
-//#include "GlobalVariables.h"
-
 #include "buttons_callback.h"
-
-
-Music music;
-Music oryginalMusic;
-Music effectsMusic;
-
-
-EffectHandle echoEffect(EffectHandle::EffectType::ECHO);
-EffectHandle distortionEffect(EffectHandle::EffectType::DISTORTION);
-EffectHandle bitCrusherEffect(EffectHandle::EffectType::BITCRUSHER);
-EffectHandle ringModulatorEffect(EffectHandle::EffectType::RINGMODULATOR);
-EffectHandle reverseEffect(EffectHandle::EffectType::REVERSE);
-EffectHandle tremoloEffect(EffectHandle::EffectType::TREMOLO);
-
-
-std::vector <Fl_Widget*> widgetsPtr;
-std::vector <Fl_Widget*> boxesWidget;
-bool loadedFiles = false;
-
-
-
-//########################################
-//BUTTONS 
-void but_loadSound_cb(Fl_Widget* w, void*v);
-//void but_loadSound_cb(Fl_Widget* w, void* v, void* music, void* oryginal, void* effects); doesn't work
-void but_saveSound_cb(Fl_Widget* w, void*v);
-//void but_play_cb(Fl_Widget* w, void* v);
-void but_pause_cb(Fl_Widget* w, void* v);
-void but_loop_cb(Fl_Widget* w, void* v);
-void but_stop_cb(Fl_Widget* w, void* v);
-void but_rewind_cb(Fl_Widget* w, void* v);
-void but_forward_cb(Fl_Widget* w, void* v);
-void but_changeSound_cb(Fl_Widget *w, void* v);
-
-
-
-//########################################
-//CLOSE WINDOW
-void but_exit_cb(Fl_Widget *w, void* v);
-
-
-//########################################
-//SLIDERS
-void but_volume_set_cb(Fl_Widget *w, void *v);
-void but_speedPlus_cb(Fl_Widget* w, void* v);
-void but_speedMinus_cb(Fl_Widget* w, void* v);
-
-
-//########################################
-//EFFECTS
-void but_resetEffects_cb(Fl_Widget *w, void* v);
-void but_echo_cb(Fl_Widget *w, void* v);
-void but_echo_force_set_cb(Fl_Widget *w, void* v);
-void but_echo_delay_set_cb(Fl_Widget *w, void* v);
-void but_distortion_cb(Fl_Widget *w, void* v);
-void but_distortion_set_cb(Fl_Widget *w, void* v);
-void but_bitCrusher_cb(Fl_Widget *w, void* v);
-void but_bitCrusher_set_cb(Fl_Widget *w, void* v);
-void but_ringModulator_cb(Fl_Widget *w, void* v);
-void but_ringModulatorForce_set_cb(Fl_Widget *w, void* v);
-void but_ringModulatorFreq_set_cb(Fl_Widget *w, void* v);
-void but_reverse_cb(Fl_Widget *w, void* v);
-void but_tremolo_cb(Fl_Widget *w, void* v);
-void but_tremolo_set_cb(Fl_Widget *w, void* v);
-
-
-
-//########################################
-//GUI
-int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic, bool openedFiles);
-
-
+#include "GlobalVariables.h"
 
 
 
@@ -85,11 +10,17 @@ int main()
 	system("Color 0B");
 	std::cout << "Efekt gitarowy - projekt\n Author: Jakub Marcinkowski, Krakow, 06.2019\n\n" << std::endl;
 
-	int ret = initGUI(music, oryginalMusic, effectsMusic, loadedFiles);
-
-		
+	int ret = initGUI(music, oryginalMusic, effectsMusic, loadedFiles);	
 return ret;
 }
+
+
+
+
+
+
+
+
 
 
 
@@ -97,10 +28,12 @@ return ret;
 //DEFINITIONS OF FUNCTIONS
 int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic, bool openedFiles)
 {
+
 	Fl_Window win(800, 480);
 	win.color(148);
 	win.begin();
 
+	
 
 	Fl_Text_Display soundLengthText(210, 130, 0, 30, "Music length: --:--:--");
 	soundLengthText.align(FL_ALIGN_RIGHT);
@@ -179,12 +112,13 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic, bool openedFi
 	but_exit.color2(Fl_Color(157));
 	but_exit.color(Fl_Color(157));
 
+	
 	Fl_Button but_play(250, 60, 30, 30, "@>");
 	but_play.shortcut('/');
 	but_play.callback(but_play_cb, &mMusic);
 	but_play.color(Fl_Color(157));
 	but_play.color2(Fl_Color(157));
-
+	
 	Fl_Button but_pause(210, 60, 30, 30, "||");
 	but_pause.shortcut(FL_Pause);
 	but_pause.callback(but_pause_cb, &mMusic);
@@ -364,6 +298,7 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic, bool openedFi
 	//wyszarz
 	deactivateAllWidgetsInVectorOfPointers(loadedFiles, widgetsPtr);
 
+
 	win.end();
 	win.show();
 	return(Fl::run());
@@ -397,72 +332,12 @@ void but_saveSound_cb(Fl_Widget* w, void*v)
 	std::cout << std::endl << "Button saveSound callback!" << std::endl;
 }
 
-void but_pause_cb(Fl_Widget* w, void* v)
-{
-	//music.pauseSound();
-	((Music*)v)->pauseSound();
-	std::cout << std::endl << "Button pause callback!" << std::endl;
-}
-
-void but_loop_cb(Fl_Widget* w, void* v)
-{
-	//music.loopSound();
-	((Music*)v)->loopSound();
-	std::cout << std::endl << "Button loop callback!" << std::endl;
-}
-
-void but_stop_cb(Fl_Widget* w, void* v)
-{
-	//music.stopSound();
-	((Music*)v)->stopSound();
-	std::cout << std::endl << "Button stop callback!" << std::endl;
-}
-
-void but_rewind_cb(Fl_Widget* w, void* v)
-{
-	//music.rewindSound();
-	((Music*)v)->rewindSound();
-	std::cout << std::endl << "Button rewind callback!" << std::endl;
-}
-
-void but_forward_cb(Fl_Widget* w, void* v)
-{
-	//music.forwardSound();
-	((Music*)v)->forwardSound();
-	std::cout << std::endl << "Button forward callback!" << std::endl;
-}
-
-
 //slider
 void but_volume_set_cb(Fl_Widget *w, void *v)
 {
 	music.setVolume(((Fl_Value_Slider*)v)->value());
 	effectsMusic.setVolume(((Fl_Value_Slider*)v)->value());
 	oryginalMusic.setVolume(((Fl_Value_Slider*)v)->value());
-}
-
-void but_speedPlus_cb(Fl_Widget* w, void* v)
-{
-	//music.speedPlus();
-	((Music*)v)->speedPlus();
-	std::cout << std::endl << "Button speed plus callback!" << std::endl;
-}
-
-void but_speedMinus_cb(Fl_Widget* w, void* v)
-{
-	//music.speedMinus();
-	((Music*)v)->speedMinus();
-	std::cout << std::endl << "Button slow callback!" << std::endl;
-}
-
-//########################################
-//CLOSE WINDOW
-void but_exit_cb(Fl_Widget *w, void* v)
-{
-	if (fl_ask("Do you want to exit?"))
-	{
-		((Fl_Window*)v)->hide();//zamkniecie okna glownego win, przy pomocy wskaznika
-	}
 }
 
 
@@ -498,26 +373,27 @@ void but_resetEffects_cb(Fl_Widget *w, void* v)
 
 void but_echo_cb(Fl_Widget *w, void* v)
 {
-
-	std::cout << std::endl << "Button echo callback!" << std::endl;
 	std::vector<sf::Int16> samples = ((Music*)v)->getSamples();
+	std::cout << std::endl << "Button echo callback!" << std::endl;
 	echoEffect.effect(samples);
+
 	if (effectsMusic.loadSamples(samples, effectsMusic.getFs()))
 	{
 		w->type(FL_NORMAL_BUTTON);
 	}
+
 }
 
 void but_echo_force_set_cb(Fl_Widget *w, void* v)
 {
 	std::cout << std::endl << "Button echo force set callback!" << std::endl;
-	echoEffect.setParamFloat1((((Fl_Value_Slider*)v)->value()) / 100); // podzielic przez 100 % !
+	echoEffect.setParamFloat1(static_cast<float>((((Fl_Value_Slider*)v)->value()) / 100)); // podzielic przez 100 % !
 }
 
 void but_echo_delay_set_cb(Fl_Widget *w, void* v)
 {
 	std::cout << std::endl << "Button echo delay set callback!" << std::endl;
-	echoEffect.setParamInt1((((Fl_Value_Slider*)v)->value()*(effectsMusic.getFs() / 1000)));
+	echoEffect.setParamInt1(static_cast<int>((((Fl_Value_Slider*)v)->value()*(effectsMusic.getFs() / 1000))));
 }
 
 void but_distortion_cb(Fl_Widget *w, void* v)
@@ -534,7 +410,7 @@ void but_distortion_cb(Fl_Widget *w, void* v)
 void but_distortion_set_cb(Fl_Widget *w, void* v)
 {
 	std::cout << std::endl << "Button distortion set callback!" << std::endl;
-	distortionEffect.setParamFloat1((((Fl_Value_Slider*)v)->value()) / 100);
+	distortionEffect.setParamFloat1(static_cast<float>((((Fl_Value_Slider*)v)->value()) / 100));
 }
 
 void but_bitCrusher_cb(Fl_Widget *w, void* v)
@@ -551,8 +427,8 @@ void but_bitCrusher_cb(Fl_Widget *w, void* v)
 void but_bitCrusher_set_cb(Fl_Widget *w, void* v)
 {
 	std::cout << std::endl << "Button bitCrusher set callback!" << std::endl;
-	bitCrusherEffect.setParamInt1(((Fl_Value_Slider*)v)->value());
-	effectsMusic.setFs(oryginalMusic.getFs()/(4*((Fl_Value_Slider*)v)->value())); // 4 is a factor of density frequency
+	bitCrusherEffect.setParamInt1(static_cast<int>(((Fl_Value_Slider*)v)->value()));
+	effectsMusic.setFs(static_cast<int>(oryginalMusic.getFs()/(4*((Fl_Value_Slider*)v)->value()))); // 4 is a factor of density frequency
 }
 
 
@@ -570,13 +446,13 @@ void but_ringModulator_cb(Fl_Widget *w, void* v)
 void but_ringModulatorForce_set_cb(Fl_Widget *w, void* v)
 {
 	std::cout << std::endl << "Button ringModulator force set callback!" << std::endl;
-	ringModulatorEffect.setParamFloat1((((Fl_Value_Slider*)v)->value()) / 100); //[%]
+	ringModulatorEffect.setParamFloat1(static_cast<float>((((Fl_Value_Slider*)v)->value()) / 100)); //[%]
 }
 
 void but_ringModulatorFreq_set_cb(Fl_Widget *w, void* v)
 {
 	std::cout << std::endl << "Button ringModulator freq set callback!" << std::endl;
-	ringModulatorEffect.setParamInt1((((Fl_Value_Slider*)v)->value()));
+	ringModulatorEffect.setParamInt1(static_cast<int>((((Fl_Value_Slider*)v)->value())));
 }
 
 
@@ -606,7 +482,7 @@ void but_tremolo_cb(Fl_Widget *w, void* v)
 void but_tremolo_set_cb(Fl_Widget *w, void* v)
 {
 	std::cout << std::endl << "Button tremolo set callback!" << std::endl;
-	tremoloEffect.setParamInt1(((Fl_Value_Slider*)v)->value());
+	tremoloEffect.setParamInt1(static_cast<int>(((Fl_Value_Slider*)v)->value()));
 }
 
 

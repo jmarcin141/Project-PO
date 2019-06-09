@@ -1,6 +1,75 @@
 #include "buttons_callback.h"
 
 
+void but_play_cb(Fl_Widget* w, void* v)
+{
+	std::cout << std::endl << "Button play/stop callback!" << std::endl;
+	((Music*)v)->playSoud();
+}
+
+void but_pause_cb(Fl_Widget* w, void* v)
+{
+	//music.pauseSound();
+	((Music*)v)->pauseSound();
+	std::cout << std::endl << "Button pause callback!" << std::endl;
+}
+
+void but_loop_cb(Fl_Widget* w, void* v)
+{
+	//music.loopSound();
+	((Music*)v)->loopSound();
+	std::cout << std::endl << "Button loop callback!" << std::endl;
+}
+
+void but_stop_cb(Fl_Widget* w, void* v)
+{
+	//music.stopSound();
+	((Music*)v)->stopSound();
+	std::cout << std::endl << "Button stop callback!" << std::endl;
+}
+
+void but_rewind_cb(Fl_Widget* w, void* v)
+{
+	//music.rewindSound();
+	((Music*)v)->rewindSound();
+	std::cout << std::endl << "Button rewind callback!" << std::endl;
+}
+
+void but_forward_cb(Fl_Widget* w, void* v)
+{
+	//music.forwardSound();
+	((Music*)v)->forwardSound();
+	std::cout << std::endl << "Button forward callback!" << std::endl;
+}
+
+
+void but_speedPlus_cb(Fl_Widget* w, void* v)
+{
+	//music.speedPlus();
+	((Music*)v)->speedPlus();
+	std::cout << std::endl << "Button speed plus callback!" << std::endl;
+}
+
+void but_speedMinus_cb(Fl_Widget* w, void* v)
+{
+	//music.speedMinus();
+	((Music*)v)->speedMinus();
+	std::cout << std::endl << "Button slow callback!" << std::endl;
+}
+
+//########################################
+//CLOSE WINDOW
+void but_exit_cb(Fl_Widget *w, void* v)
+{
+	if (fl_ask("Do you want to exit without save new music?"))
+	{
+		((Fl_Window*)v)->hide();//zamkniecie okna glownego win, przy pomocy wskaznika
+	}
+}
+
+
+
+
 //void but_loadSound_cb(Fl_Widget* w, void*v)
 //{
 //	//((Fl_Window*)v)->hide()
@@ -9,12 +78,11 @@
 //	std::cout << std::endl << "Button loadSound callback!" << std::endl;
 //}
 //
-void but_play_cb(Fl_Widget* w, void* v)
-{
-	std::cout << std::endl << "Button play/stop callback!" << std::endl;
-	//music.playSoud();
-	((Music*)v)->playSoud();
-}
+//////void but_play_cb(Fl_Widget* w, void* v)
+//////{
+//////	std::cout << std::endl << "Button play/stop callback!" << std::endl;
+//////	((Music*)v)->playSoud();
+//////}
 
 
 //

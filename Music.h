@@ -21,6 +21,8 @@ private:
 	//int lengthTime = 366; //[s]
 
 public:
+	Music(int mFs);
+
 	Music();
 	~Music();
 
