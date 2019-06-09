@@ -12,7 +12,13 @@ private:
 	std::vector<sf::Int16> samples;
 	
 	std::string fileName;
+	//std::string filePath = "E:\\AGH\\Semestr 4\\PO\\Projekty\\Projekt-Efekt-Gitarowy\\Projekt-Efekt-Gitarowy\\My Music\\";
+	std::string filePath = "C:\\Users\\Jakub-HP\\Music\\";
+
+
 	int fs = 44100;
+
+	//int lengthTime = 366; //[s]
 
 public:
 	Music();

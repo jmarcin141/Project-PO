@@ -4,7 +4,6 @@
 //#include "GlobalVariables.h"
 
 #include "buttons_callback.h"
-#include "deactivateAllWidgetsInVectorOfPointers.h"
 
 
 Music music;
@@ -20,8 +19,10 @@ EffectHandle reverseEffect(EffectHandle::EffectType::REVERSE);
 EffectHandle tremoloEffect(EffectHandle::EffectType::TREMOLO);
 
 
-
+std::vector <Fl_Widget*> widgetsPtr;
+std::vector <Fl_Widget*> boxesWidget;
 bool loadedFiles = false;
+
 
 
 //########################################
@@ -74,9 +75,7 @@ void but_tremolo_set_cb(Fl_Widget *w, void* v);
 //GUI
 int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic, bool openedFiles);
 
-//check opened files
-std::vector <Fl_Widget*> widgetsPtr;
-//void deactivateAllWidgetsInVectorOfPointers(bool openedFiles, std::vector<Fl_Widget*> vectorOfPtr);
+
 
 
 
@@ -84,16 +83,13 @@ std::vector <Fl_Widget*> widgetsPtr;
 int main()
 {
 	system("Color 0B");
-	std::cout << "Efekt gitarowy - projekt" << std::endl;
+	std::cout << "Efekt gitarowy - projekt\n Author: Jakub Marcinkowski, Krakow, 06.2019\n\n" << std::endl;
 
 	int ret = initGUI(music, oryginalMusic, effectsMusic, loadedFiles);
 
 		
-
-
 return ret;
 }
-
 
 
 
@@ -105,37 +101,24 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic, bool openedFi
 	win.color(148);
 	win.begin();
 
-	
 
-	Fl_Text_Display availableSoundsLabel(5, 25, 165, 445, "Available sounds:");
+	Fl_Text_Display soundLengthText(210, 130, 0, 30, "Music length: --:--:--");
+	soundLengthText.align(FL_ALIGN_RIGHT);
+	boxesWidget.push_back(&soundLengthText);
 
+	Fl_Text_Display availableSoundsLabel(5, 25, 165, 445, "My music folder:");
 
 	Fl_Text_Display effectsSoundLabel1(433, 170, 227, 300, ""); // vertical
 	Fl_Text_Display effectsSoundLabel2(210, 290, 450, 180, ""); //horizontal up
 	Fl_Text_Display effectsSoundLabel3(210, 380, 450, 90, ""); //horizontal down
-
 	Fl_Text_Display effectsSoundLabel(210, 170, 450, 300, "Effects:");
 
 
-	std::vector<std::string> files = getNameFilesFromDirectory();
-
-	char textNameFiles[1000] = {};
-	for (int i = 0, index = 0; i < files.size(); i++)
-	{
-		for (int j = 0; j < files.at(i).size(); j++)
-		{
-			textNameFiles[index++] = files.at(i).at(j);
-			if (j == files.at(i).size() - 1)
-			{
-				textNameFiles[index++] = '\n';
-			}
-		}
-	}
-
-	Fl_Box availableSounds(15, 30, 0, 380, textNameFiles);
+	Fl_Box availableSounds(15, 30, 0, 380, "example_track.wav");
 	availableSounds.align(FL_ALIGN_RIGHT_TOP);
 	availableSounds.color2(148);
 	availableSounds.color(156);
+	printMusicList(&availableSounds); 
 
 
 	Fl_Input fileName(310, 10, 100, 30, "@fileopen Load Sound");
@@ -152,9 +135,6 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic, bool openedFi
 	but_loadSoundAccept.shortcut(FL_Enter);
 	but_loadSoundAccept.color2(156);
 	but_loadSoundAccept.color(156);
-
-
-
 
 	Fl_Button but_changeSound(340, 60, 130, 30, "Original");
 	but_changeSound.shortcut(FL_Caps_Lock);
@@ -199,21 +179,17 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic, bool openedFi
 	but_exit.color2(Fl_Color(157));
 	but_exit.color(Fl_Color(157));
 
-
 	Fl_Button but_play(250, 60, 30, 30, "@>");
 	but_play.shortcut('/');
 	but_play.callback(but_play_cb, &mMusic);
 	but_play.color(Fl_Color(157));
 	but_play.color2(Fl_Color(157));
 
-
-
 	Fl_Button but_pause(210, 60, 30, 30, "||");
 	but_pause.shortcut(FL_Pause);
 	but_pause.callback(but_pause_cb, &mMusic);
 	but_pause.color2(Fl_Color(157));
 	but_pause.color(Fl_Color(157));
-
 
 	Fl_Light_Button but_loop(290, 60, 30, 30, "@refresh");
 	but_loop.shortcut('i');
@@ -249,7 +225,6 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic, bool openedFi
 	but_reverse.color(Fl_Color(157));
 	but_reverse.type(FL_NORMAL_BUTTON);
 
-
 	//Echo
 	Fl_Check_Button but_echo(230, 180, 180, 30, "Echo");
 	but_echo.callback(but_echo_cb, &mEffectsMusic);
@@ -268,7 +243,6 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic, bool openedFi
 	slider_echo_force.color(156);
 	slider_echo_force.color2(2); //GREEN
 
-
 	// Sliders for effects
 	Fl_Value_Slider slider_echo_delay(230, 250, 180, 15, "Delay [ms]");
 	slider_echo_delay.type(FL_HOR_NICE_SLIDER);
@@ -278,7 +252,6 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic, bool openedFi
 	slider_echo_delay.callback(but_echo_delay_set_cb, &slider_echo_delay);
 	slider_echo_delay.color(156);
 	slider_echo_delay.color2(2); //GREEN
-
 
 	// Distortion
 	Fl_Check_Button but_distortion(230, 310, 180, 30, "Distortion");
@@ -312,14 +285,12 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic, bool openedFi
 	slider_bitCrusher.color(156);
 	slider_bitCrusher.color2(2); //GREEN
 
-
 	//Ring Modulator
 	Fl_Check_Button but_ringModulator(460, 180, 180, 30, "Ring Modulator");
 	but_ringModulator.callback(but_ringModulator_cb, &mEffectsMusic);
 	but_ringModulator.color2(Fl_Color(58));
 	but_ringModulator.color(Fl_Color(157));
 	but_ringModulator.type(FL_NORMAL_BUTTON);
-
 
 	Fl_Value_Slider slider_ringModulator_force(460, 210, 180, 15, "Force [%]");
 	slider_ringModulator_force.type(FL_HOR_NICE_SLIDER);
@@ -330,7 +301,6 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic, bool openedFi
 	slider_ringModulator_force.color(156);
 	slider_ringModulator_force.color2(2); //GREEN
 
-
 	Fl_Value_Slider slider_ringModulator_freq(460, 250, 180, 15, "Frequency [Hz]");
 	slider_ringModulator_freq.type(FL_HOR_NICE_SLIDER);
 	slider_ringModulator_freq.maximum(1000);
@@ -339,7 +309,6 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic, bool openedFi
 	slider_ringModulator_freq.callback(but_ringModulatorFreq_set_cb, &slider_ringModulator_freq);
 	slider_ringModulator_freq.color(156);
 	slider_ringModulator_freq.color2(2); //GREEN
-
 
 	//Wah-Wah
 	Fl_Check_Button but_tremolo(460, 390, 180, 30, "Tremolo");
@@ -358,6 +327,7 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic, bool openedFi
 	slider_tremolo.color2(2); //GREEN
 
 
+	//do wektora daje referencje do widgetow, ktore nalezy wyszarzyc !!
 	//std::vector <Fl_Widget*> widgetsPtr;
 	widgetsPtr.push_back(&fileSaveName);
 	widgetsPtr.push_back(&effectsSoundLabel);
@@ -389,7 +359,9 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic, bool openedFi
 	widgetsPtr.push_back(&slider_tremolo);
 	widgetsPtr.push_back(&but_resetEffects);
 	widgetsPtr.push_back(&slider_volume);
+	widgetsPtr.push_back(&soundLengthText);
 
+	//wyszarz
 	deactivateAllWidgetsInVectorOfPointers(loadedFiles, widgetsPtr);
 
 	win.end();
@@ -398,43 +370,21 @@ int initGUI(Music &mMusic, Music &mOryginal, Music &mEffectsMusic, bool openedFi
 }
 
 
-
-
-
-//void deactivateAllWidgetsInVectorOfPointers(bool openedFiles, std::vector<Fl_Widget*> vectorOfPtr)
-//{
-//	if (openedFiles == false)
-//	{	
-//		for (int i = 0; i < vectorOfPtr.size(); i++)
-//		{
-//			vectorOfPtr.at(i)->deactivate();
-//		}
-//	}
-//	else //(openedFiles == true)
-//	{
-//		for (int i = 0; i < vectorOfPtr.size(); i++)
-//		{
-//			vectorOfPtr.at(i)->activate();
-//		}
-//	}
-//}
-
-
-
 //definitions of functions for sound
 void but_loadSound_cb(Fl_Widget* w, void* v)
 {
 	std::string name = ((Fl_Input*)v)->value();
 	music.setFileName(name);
-	music.loadSound();
+	loadedFiles = music.loadSound();
 
 	oryginalMusic.setFileName(name);
 	effectsMusic.setFileName(name);
 	oryginalMusic.loadSound();
 	effectsMusic.loadSound();
+	music.setSpeed(1);
 
-	loadedFiles = true;
 	deactivateAllWidgetsInVectorOfPointers(loadedFiles, widgetsPtr);
+	printTimeMusic(boxesWidget, music.getLengthTime()); //boxPtr
 
 	std::cout << std::endl << "Button loadSound callback!" << std::endl;
 }
@@ -539,6 +489,8 @@ void but_resetEffects_cb(Fl_Widget *w, void* v)
 {
 	effectsMusic.setFs(oryginalMusic.getFs());
 	effectsMusic.loadSound();
+
+	music.setSpeed(1);
 	std::cout << std::endl << "Button reset effects callback!" << std::endl;
 }
 

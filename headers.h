@@ -20,7 +20,11 @@
 
 
 #include "getNameFilesFromDirectory.h"
+#include "printMusicList.h"
+#include "printTimeMusic.h"
 
+
+#include "deactivateAllWidgetsInVectorOfPointers.h"
 //#include "but_loadSound_cb.h"
 
 

@@ -4,11 +4,15 @@
 std::vector<std::string> getNameFilesFromDirectory()
 {
 	std::vector<std::string> files;
-	std::string path = "E:/AGH/Semestr 4/PO/Projekty/Projekt-Efekt-Gitarowy/Projekt-Efekt-Gitarowy/My Music";
+	//std::string path = "E:/AGH/Semestr 4/PO/Projekty/Projekt-Efekt-Gitarowy/Projekt-Efekt-Gitarowy/My Music";
+	std::string path = "C:/Users/Jakub-HP/Music";
 	for (const auto & entry : std::experimental::filesystem::directory_iterator(path))
 	{
-		std::cout << entry.path() << std::endl;
-		files.push_back(entry.path().string());
+		if (entry.path() != (path + "/desktop.ini"))
+		{
+			std::cout << entry.path() << std::endl;
+			files.push_back(entry.path().string());
+		}
 	}
 
 	for (int i = 0; i < files.size(); i++)
